@@ -52,7 +52,7 @@ import matplotlib.cm as cm
 
 import openface
 
-modelDir = os.path.join(fileDir, '..', '..', 'models')
+modelDir = os.path.join(fileDir,'..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 # For TLS connections
@@ -104,9 +104,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
     def onConnect(self, request):
-    	print("&&&&&&&&&&&****************&&&&&&&&&&&&")
         print("Client connecting: {0}".format(request.peer))
-        print("&&&&&&&&&&&****************&&&&&&&&&&&&")
         self.training = True
 
     def onOpen(self):
@@ -119,20 +117,12 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         msg = json.loads(raw)
         print("Received {} message of length {}.".format(
             msg['type'], len(raw)))
-        if msg['type'] == "ALL_STATE":
-            self.loadState(msg['images'], msg['training'], msg['people'])
-        elif msg['type'] == "NULL":
-            self.sendMessage('{"type": "NULL"}')
-        elif msg['type'] == "FRAME":
-            self.processFrame(msg['dataURL'], msg['identity'])
-            self.sendMessage('{"type": "PROCESSED"}')
-        elif msg['type'] == "TRAINING":
+        if msg['type'] == "TRAINING":
             self.training = msg['val']
             if not self.training:
                 self.trainSVM()
-        elif msg['type'] == "ADD_PERSON":
-            self.people.append(msg['val'].encode('ascii', 'ignore'))
-            print(self.people)
+        elif msg['type'] == "register_click":
+            print(msg['val'])
         elif msg['type'] == "UPDATE_IDENTITY":
             h = msg['hash'].encode('ascii', 'ignore')
             if h in self.images:

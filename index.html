@@ -14,16 +14,16 @@
     <div class="container">
         <div class="content">
             <h2>Register yourself</h2>
-            <div class="btn-group" role="group" id="serverBtn">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button"
-                    id="addPersonBtn">
+            <span class="input-group-btn">
+               <div id="button"><a href="page2.html">Log In</a></div>
+
+               <!--  <button class="btn btn-default" type="button"
+                    id="Registerbtn">
                     Register
-                </button>
+                </button> -->
             </span>                    
         </div>
     </div>
-</div>
 </body>
 <script src="vendor/js/jquery.min.js"></script>
 <script src="vendor/js/bootstrap.min.js"></script>
@@ -34,7 +34,8 @@
 <script src="js/utils.js"></script>
 <script src="js/openface-demo.js"></script>
 <script type="text/javascript">
- registerHbarsHelpers();      
- $("#addPersonBtn").click(addPersonCallback);
+   registerHbarsHelpers();      
+   //$("#Registerbtn").click(RegisterbtnOnClick);
+   createSocket("wss://" + window.location.hostname + ":9000", "Local");
 </script>
 </html>

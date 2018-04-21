@@ -244,6 +244,19 @@ function umSuccess(stream) {
     sendFrameLoop();
 }
 
+function RegisterbtnOnClick(){
+    if(socket != null){
+        var msg = {
+            'type': 'register_click',
+            'val': 'clicked on register'
+        };
+        socket.send(JSON.stringify(msg));
+
+    }
+}
+
+
+
 function addPersonCallback(el) {
     defaultPerson = people.length;
     var newPerson = "Clicked the button";
