@@ -53,7 +53,7 @@ import matplotlib.cm as cm
 import openface
 
 nameCounter = 0
-modelDir = os.path.join(fileDir,'..', 'models')
+modelDir = os.path.join(fileDir, 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 # For TLS connections
@@ -310,7 +310,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             else:
 
                 print("came here")
-                cv2.imwrite(str(self.frameNum)+".jpeg", alignedFace)
+                #cv2.imwrite(str(self.frameNum)+".jpeg", alignedFace)
                 rep = net.forward(alignedFace)
                 # print(rep)
                 if self.training:
