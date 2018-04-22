@@ -200,7 +200,10 @@ function createSocket(address, name) {
             }
         } else if (j.type == "PROCESSED") {
             tok++;
-        } else if (j.type == "NEW_IMAGE") {
+        }  else if(j.type == "WARNING") {
+            tok++;
+            console.log(j.message)
+        }  else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
                 identity: j.identity,

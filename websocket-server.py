@@ -16,6 +16,7 @@
 
 import os
 import sys
+import shutil
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -101,12 +102,17 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.people = []
         self.svm = None
         self.frameNum = 0
+        self.clientIP = ""
+        self.dirname = ""
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
+        self.clientIP = str(request.peer)
         self.training = True
+        tempPath = "./"+self.clientIP
+        self.dirname = tempPath
 
     def onOpen(self):
         print("WebSocket connection open.")
@@ -159,6 +165,8 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
+        shutil.rmtree(self.dirname)
+
     def loadState(self, jsImages, training, jsPeople):
         self.training = training
 
@@ -293,6 +301,30 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
 
         identities = []
         # bbs = align.getAllFaceBoundingBoxes(rgbFrame)
+
+        assert rgbFrame is not None
+        bbs = align.getAllFaceBoundingBoxes(rgbFrame)
+        print(len(bbs))
+        if len(bbs) > 1:
+            print("More than one person in front of cam")
+            msg = {
+                 "type": "WARNING",
+                 "message": "Please make ensure only one person is infront of the cam"
+             }
+            self.sendMessage(json.dumps(msg))
+            return
+
+        if len(bbs) == 0:
+            print("No human face detected")
+            msg = {
+                 "type": "WARNING",
+                 "message": "No face found, please be present in front of the camera, alone!!"
+             }
+            self.sendMessage(json.dumps(msg))
+            return
+        
+        ##------------------End of Handling no face or more than one face
+
         bb = align.getLargestFaceBoundingBox(rgbFrame)
         bbs = [bb] if bb is not None else []
         for bb in bbs:
@@ -310,6 +342,12 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             else:
 
                 print("came here")
+                tempPath = self.dirname
+                if not os.path.exists(tempPath):
+                    os.makedirs(tempPath)         
+
+                cv2.imwrite(tempPath+"/"+str(self.frameNum)+".jpeg", alignedFace)
+
                 #cv2.imwrite(str(self.frameNum)+".jpeg", alignedFace)
                 rep = net.forward(alignedFace)
                 # print(rep)
