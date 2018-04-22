@@ -30,6 +30,7 @@ from twisted.internet.ssl import DefaultOpenSSLContextFactory
 
 from twisted.python import log
 
+import pandas
 import argparse
 import cv2
 import imagehash
@@ -104,6 +105,8 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.frameNum = 0
         self.clientIP = ""
         self.dirname = ""
+        self.UName = ""
+        self.MailID = ""
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
@@ -131,8 +134,13 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         elif msg['type'] == "INFO":
             print("Name of the person is : ")
             print(msg['name'])
+            self.UName = msg['name']
             print("Mail of the person is : ")
             print(msg['mail'])
+            self.MailID = msg['mail']
+            self.sendMessage('{"type": "END_FACE_COLLECTION"}')
+        elif msg['type'] == "STOPPED_ACK":
+        	self.storefaces()
         elif msg['type'] == "NULL":
             self.sendMessage('{"type": "NULL"}')
         elif msg['type'] == "FRAME":
@@ -160,12 +168,31 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                 print("Image not found.")
         elif msg['type'] == 'REQ_TSNE':
             self.sendTSNE(msg['people'])
-        else:
+        else:        	
             print("Warning: Unknown message type: {}".format(msg['type']))
+    def storefaces(self):
+    	#Storing User Details in CSV file
 
+    	userFolder = "./training_images/"+self.UName+"_"+self.MailID
+    	if not os.path.exists(userFolder):
+    		os.makedirs(userFolder)
+    		
+    	if os.path.exists(self.dirname):
+    		files = os.listdir(self.dirname)
+    		for f in files:
+    			shutil.move(self.dirname+"/"+f, userFolder)	
+    		#shutil.move(self.dirname, userFolder)
+    		os.rmdir(self.dirname)
+    		print("Creation moving and deletion done")
+    
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
-        shutil.rmtree(self.dirname)
+        print("Called Close connection")
+        if os.path.exists(self.dirname):
+        	print("Inside the if", self.dirname)
+        	shutil.move(self.dirname,"./uselessFaces")
+        	#shutil.remove(self.dirname)
+        	print("Directory Moved Successful")
 
     def loadState(self, jsImages, training, jsPeople):
         self.training = training
@@ -261,20 +288,6 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                  'kernel': ['rbf']}
             ]
             self.svm = GridSearchCV(SVC(C=1), param_grid, cv=5).fit(X, y)
-    
-    def mkdir_p(path):
-       try:
-           os.makedirs(path)
-       except OSError as exc: # Python >2.5
-           if exc.errno == errno.EEXIST and os.path.isdir(path):
-               pass
-           else: raise
-
-    def safe_open_w(path):
-       ''' Open "path" for writing, creating any parent directories as needed.
-       '''
-       mkdir_p(os.path.dirname(path))
-       return open(path, 'w')
 
     def processFrame(self, dataURL, identity):
         

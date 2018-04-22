@@ -203,6 +203,11 @@ function createSocket(address, name) {
         }  else if(j.type == "WARNING") {
             tok++;
             console.log(j.message)
+        }  else if(j.type == "END_FACE_COLLECTION"){
+            tok = -100;
+            var UsrName = j.name;
+            var mailID = j.mail;
+            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
         }  else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
