@@ -1,7 +1,6 @@
 /*
 Copyright 2015-2016 Carnegie Mellon University
 
-Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
@@ -13,7 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+ $(function(){var socket, socketName;
+  vidReady = false;
+     var  defaultNumNulls = 20;
+     var people = [], defaultPerson = -1,
+         images = [],
+         training = false;
+     var numNulls, sentTimes, receivedTimes;
+ });
+    
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ?
@@ -171,6 +178,8 @@ function sendState() {
 }
 
 function createSocket(address, name) {
+		var defaultTok = 1,
+
     socket = new WebSocket(address);
     socketName = name;
     socket.binaryType = "arraybuffer";
@@ -258,6 +267,7 @@ function createSocket(address, name) {
 }
 
 function umSuccess(stream) {
+	var vid = document.getElementById('videoel');
     if (vid.mozCaptureStream) {
         vid.mozSrcObject = stream;
     } else {

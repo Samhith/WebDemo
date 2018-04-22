@@ -5,25 +5,64 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Face Recognition</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link href="vendor/css/bootstrap-dialog.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="content">
+    <div class="container-fluid">
+       <!-- <div class="content">
             <h2>Register yourself</h2>
             <span class="input-group-btn">
-               
-
-               <button class="btn btn-default" type="button" onclick="openRegistration()" 
+                <button class="btn btn-default" type="button" onclick="openRegistration()" 
                     id="Registerbtn">
                     Register
                 </button>
             </span>                    
-        </div>
+        </div>-->
+<div class="modal" tabindex="-1" role="dialog"id="RegisterModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+       
+       <h5 class="modal-title"onclick="openRegistration()">Register</h5>
+       <!-- <button type="button" id="Registerbtn" class="btn btn-primary"  > </button>-->
+       
+      </div>
+     
+     
     </div>
+  </div>
+</div>
+<div id="mainContent" style="display:none;">
+ <div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-6">
+                <div id='tab-preview' class='tab-content'>
+                    <video id="videoel" width="400" height="300"
+                           preload="auto" loop autoplay></video>
+                </div>
+   <!--</div>
+    <div class="content">-->
+        <h2>Register yourself</h2>
+		
+        <form action="#" method="post" name="form_name" id="form_id" >
+		   <div class="form-group">
+          <!--  <h2>Javascript Form Submit Example</h2>-->
+             <label>Name :</label>
+             <input type="text" name="name" id="name" placeholder="Name" />
+		   </div>
+		   <div class="form-group">
+              <label>Email :</label>
+              <input type="text" name="email" id="email" placeholder="Valid Email" />
+			</div>
+            <input type="button" class="btn btn-primary" name="submit_id" id="btn_id" value="Submit" onclick="submit_by_data()"/>
+        </form>                 
+    </div>
+	</div>
+  </div>
 </body>
 <script src="vendor/js/jquery.min.js"></script>
 <script src="vendor/js/bootstrap.min.js"></script>
@@ -35,9 +74,37 @@
 <script src="js/openface-demo.js"></script>
 <script type="text/javascript">
 
+$('#RegisterModal').modal('show');
+function openRegistration() {
+	$('#mainContent').css('display','block');
 
-   registerHbarsHelpers();      
+    $('#RegisterModal').modal('hide');
+    //window.open("https://localhost:8000/page2.html","_self");
+	 $('#tab-preview').addClass('current')
+       // var vid = document.getElementById('videoel'),
+     if (navigator.getUserMedia) {
+         var videoSelector = {video : true};
+         navigator.getUserMedia(videoSelector, umSuccess, function() {
+             alert("Error fetching video from webcam");
+         });
+     } else {
+         alert("No webcam detected.");
+     }
+ registerHbarsHelpers();      
+ createSocket("wss://" + window.location.hostname + ":9000", "Local");
+
+}
+   /* var defaultTok = 1, defaultNumNulls = 20;
+     var tok = defaultTok,
+         people = [], defaultPerson = -1,
+         images = [],
+         training = false;
+     var numNulls, sentTimes, receivedTimes;
+     var socket, socketName;*/
+
+  // registerHbarsHelpers();      
+
    //$("#Registerbtn").click(RegisterbtnOnClick);
-   createSocket("wss://" + window.location.hostname + ":9000", "Local");
+ //  createSocket("wss://" + window.location.hostname + ":9000", "Local");
 </script>
 </html>
