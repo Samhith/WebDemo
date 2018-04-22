@@ -170,7 +170,6 @@ function sendState() {
 }
 
 function createSocket(address, name) {
-		var defaultTok = 1,
 
     socket = new WebSocket(address);
     socketName = name;

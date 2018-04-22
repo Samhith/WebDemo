@@ -95,6 +95,8 @@ function openRegistration() {
  createSocket("wss://" + window.location.hostname + ":9000", "Local");
 
 }
+var vid = document.getElementById('videoel'),
+         vidReady = false;
 var defaultTok = 1, defaultNumNulls = 20;
      var tok = defaultTok,
          people = [], defaultPerson = -1,
