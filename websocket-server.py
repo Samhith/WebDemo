@@ -17,6 +17,8 @@
 import os
 import sys
 import shutil
+import time
+import datetime
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -30,7 +32,7 @@ from twisted.internet.ssl import DefaultOpenSSLContextFactory
 
 from twisted.python import log
 
-import pandas
+import pandas as pd
 import argparse
 import cv2
 import imagehash
@@ -107,6 +109,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.dirname = ""
         self.UName = ""
         self.MailID = ""
+        self.uniqueID = ""
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
@@ -171,9 +174,19 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         else:        	
             print("Warning: Unknown message type: {}".format(msg['type']))
     def storefaces(self):
+    	
+    	#Generating Unique Id to user
+    	ts = time.time()
+    	self.uniqueID = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
+    	print(self.uniqueID)
+    	
     	#Storing User Details in CSV file
+    	d = {'ID': [self.uniqueID], 'Name':[self.UName], 'Mail':[self.MailID] }
+    	data = pd.DataFrame(data = d)
+    	with open('User_Details.csv', 'a') as f:
+    		data.to_csv(f, header = False)
 
-    	userFolder = "./training_images/"+self.UName+"_"+self.MailID
+    	userFolder = "./training_images/"+self.uniqueID
     	if not os.path.exists(userFolder):
     		os.makedirs(userFolder)
     		
