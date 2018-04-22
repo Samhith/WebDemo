@@ -12,14 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
- $(function(){var socket, socketName;
-  vidReady = false;
-     var  defaultNumNulls = 20;
-     var people = [], defaultPerson = -1,
-         images = [],
-         training = false;
-     var numNulls, sentTimes, receivedTimes;
- });
     
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||

@@ -76,6 +76,7 @@
 
 $('#RegisterModal').modal('show');
 function openRegistration() {
+
 	$('#mainContent').css('display','block');
 
     $('#RegisterModal').modal('hide');
@@ -94,13 +95,15 @@ function openRegistration() {
  createSocket("wss://" + window.location.hostname + ":9000", "Local");
 
 }
-   /* var defaultTok = 1, defaultNumNulls = 20;
+var defaultTok = 1, defaultNumNulls = 20;
      var tok = defaultTok,
          people = [], defaultPerson = -1,
          images = [],
          training = false;
      var numNulls, sentTimes, receivedTimes;
-     var socket, socketName;*/
+     var socket, socketName;
+     
+    
 
   // registerHbarsHelpers();      
 
