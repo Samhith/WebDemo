@@ -41,6 +41,8 @@ $.fn.pressEnter = function(fn) {
     });
  };
 
+
+
 function registerHbarsHelpers() {
     // http://stackoverflow.com/questions/8853396
     Handlebars.registerHelper('ifEq', function(v1, v2, options) {
@@ -77,8 +79,23 @@ function sendFrameLoop() {
     }
     setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 250);
 }
+function submit_by_data(){
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    console.log(name);
+    var msg = {
 
+        'type': 'INFO',
+        'name': name,
+        'mail' : email
+    };
+    socket.send(JSON.stringify(msg));
 
+}
+function openRegistration() {
+    window.open("https://localhost:8000/page2.html","_self");
+
+}
 function getPeopleInfoHtml() {
     var info = {'-1': 0};
     var len = people.length;

@@ -52,6 +52,7 @@ import matplotlib.cm as cm
 
 import openface
 
+nameCounter = 0
 modelDir = os.path.join(fileDir,'..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
@@ -121,6 +122,18 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.training = msg['val']
             if not self.training:
                 self.trainSVM()
+        elif msg['type'] == "INFO":
+            print("Name of the person is : ")
+            print(msg['name'])
+            print("Mail of the person is : ")
+            print(msg['mail'])
+        elif msg['type'] == "NULL":
+            self.sendMessage('{"type": "NULL"}')
+        elif msg['type'] == "FRAME":
+            print("received frame")
+            self.processFrame(msg['dataURL'], msg['identity'])
+            self.sendMessage('{"type": "PROCESSED"}')
+
         elif msg['type'] == "register_click":
             print(msg['val'])
         elif msg['type'] == "UPDATE_IDENTITY":
@@ -146,7 +159,6 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
-
     def loadState(self, jsImages, training, jsPeople):
         self.training = training
 
@@ -241,8 +253,23 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                  'kernel': ['rbf']}
             ]
             self.svm = GridSearchCV(SVC(C=1), param_grid, cv=5).fit(X, y)
+    
+    def mkdir_p(path):
+       try:
+           os.makedirs(path)
+       except OSError as exc: # Python >2.5
+           if exc.errno == errno.EEXIST and os.path.isdir(path):
+               pass
+           else: raise
+
+    def safe_open_w(path):
+       ''' Open "path" for writing, creating any parent directories as needed.
+       '''
+       mkdir_p(os.path.dirname(path))
+       return open(path, 'w')
 
     def processFrame(self, dataURL, identity):
+        
         head = "data:image/jpeg;base64,"
         assert(dataURL.startswith(head))
         imgdata = base64.b64decode(dataURL[len(head):])
@@ -281,6 +308,9 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             if phash in self.images:
                 identity = self.images[phash].identity
             else:
+
+                print("came here")
+                cv2.imwrite(str(self.frameNum)+".jpeg", alignedFace)
                 rep = net.forward(alignedFace)
                 # print(rep)
                 if self.training:
