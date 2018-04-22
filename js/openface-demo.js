@@ -93,7 +93,7 @@ function submit_by_data(){
 
 }
 function openRegistration() {
-    window.open("https://localhost:8000/page2.html","_self");
+    window.open("page2.html","_self");
 
 }
 function getPeopleInfoHtml() {
