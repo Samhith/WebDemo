@@ -93,3 +93,28 @@ ul.tabs li.current{
 .tab-content.current{
     display: inherit;
 }
+
+.modal-dialog{
+  margin: 30em auto;
+}
+.modal-header{
+ padding:0px !important;
+ border-bottom-width: 0px !important;
+}
+.mainBtn{
+	font-size: x-large;
+    height: 50px;
+    width: 500px !important;
+    border:0px !important;
+    padding-bottom: 0px;
+}
+#mainHeading{
+	color:#337ab7;
+	margin-left:75px;
+	}
+	
+	.card{
+		padding-top:10px;
+		padding-bottom:10px;
+	}
+
