@@ -76,36 +76,7 @@ function sendFrameLoop() {
         socket.send(JSON.stringify(msg));
         tok--;
     }
-    setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 50);
-}
-
-function sendTrainingFrameLoop(){
-
-    if (socket == null || socket.readyState != socket.OPEN ||
-        !vidReady || numNulls != defaultNumNulls) {
-        return;
-    }
-
-    if (tok > 0) {
-        var canvas = document.createElement('canvas');
-        canvas.width = vid.width;
-        canvas.height = vid.height;
-        var cc = canvas.getContext('2d');
-        cc.drawImage(vid, 0, 0, vid.width, vid.height);
-        var apx = cc.getImageData(0, 0, vid.width, vid.height);
-
-        var dataURL = canvas.toDataURL('image/jpeg', 0.6)
-
-        var msg = {
-            'type': 'FRAME',
-            'dataURL': dataURL,
-            'identity': defaultPerson
-        };
-        socket.send(JSON.stringify(msg));
-        tok--;
-    }
     setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 250);
-
 }
 function submit_by_data(){
     var name = document.getElementById("name").value;
@@ -297,19 +268,6 @@ function umSuccess(stream) {
     vid.play();
     vidReady = true;
     sendFrameLoop();
-}
-
-function umSuccess2(stream) {
-    var vid = document.getElementById('videoel2');
-    if (vid.mozCaptureStream) {
-        vid.mozSrcObject = stream;
-    } else {
-        vid.src = (window.URL && window.URL.createObjectURL(stream)) ||
-            stream;
-    }
-    vid.play();
-    vidReady = true;
-    sendTrainingFrameLoop();
 }
 
 function RegisterbtnOnClick(){
