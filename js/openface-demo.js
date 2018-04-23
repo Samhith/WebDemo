@@ -178,9 +178,9 @@ function createSocket(address, name) {
         $("#serverStatus").html("Connected to " + name);
         sentTimes = [];
         receivedTimes = [];
+		numwarning=0;
         tok = defaultTok;
         numNulls = 0
-
         socket.send(JSON.stringify({'type': 'NULL'}));
         sentTimes.push(new Date());
     }
@@ -202,6 +202,11 @@ function createSocket(address, name) {
             tok++;
         }  else if(j.type == "WARNING") {
             tok++;
+			numwarning++;
+			if(numwarning == 20){
+			 toastr.warning(j.message);
+			 numwarning=0;
+			}
             console.log(j.message)
         }  else if(j.type == "END_FACE_COLLECTION"){
             tok = -100;
