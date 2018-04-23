@@ -11,8 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
-    
+*/  
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ?
@@ -40,7 +39,7 @@ $.fn.pressEnter = function(fn) {
     });
  };
 
-
+var uniqueId = 0;
 
 function registerHbarsHelpers() {
     // http://stackoverflow.com/questions/8853396
@@ -67,12 +66,12 @@ function sendFrameLoop() {
         var apx = cc.getImageData(0, 0, vid.width, vid.height);
 
         var dataURL = canvas.toDataURL('image/jpeg', 0.6)
-
         var msg = {
             'type': 'FRAME',
             'dataURL': dataURL,
-            'identity': defaultPerson
-        };
+            'identity': defaultPerson,
+            "ID": uniqueId
+            };
         socket.send(JSON.stringify(msg));
         tok--;
     }
@@ -81,19 +80,17 @@ function sendFrameLoop() {
 function submit_by_data(){
     var name = document.getElementById("name").value;
     var email = document.getElementById("email").value;
-    console.log(name);
     var msg = {
-
         'type': 'INFO',
         'name': name,
         'mail' : email
     };
+    console.log("Submiting info");
     socket.send(JSON.stringify(msg));
-
+    //window.open("page3.html");
 }
 function openRegistration() {
     window.open("page2.html","_self");
-
 }
 function getPeopleInfoHtml() {
     var info = {'-1': 0};
@@ -178,9 +175,9 @@ function createSocket(address, name) {
         $("#serverStatus").html("Connected to " + name);
         sentTimes = [];
         receivedTimes = [];
-		numwarning=0;
         tok = defaultTok;
         numNulls = 0
+
         socket.send(JSON.stringify({'type': 'NULL'}));
         sentTimes.push(new Date());
     }
@@ -200,20 +197,22 @@ function createSocket(address, name) {
             }
         } else if (j.type == "PROCESSED") {
             tok++;
+        }  else if(j.type == "STORED_PAGE2"){
+            uniqueId = j.id;
+            console.log(uniqueId);
+            console.log("Calling page3");
+            window.open("page3.html");
         }  else if(j.type == "WARNING") {
             tok++;
-			numwarning++;
-			if(numwarning == 20){
-			 toastr.warning(j.message);
-			 numwarning=0;
-			}
             console.log(j.message)
         }  else if(j.type == "END_FACE_COLLECTION"){
             tok = -100;
             var UsrName = j.name;
             var mailID = j.mail;
-            socket.send(JSON.stringify({'type': 'STOPPED_ACK'}))
-        }  else if (j.type == "NEW_IMAGE") {
+            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
+        }  else if(j.type == "PAGE3"){
+            sendFrameLoop();
+        }else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
                 identity: j.identity,
@@ -263,7 +262,7 @@ function createSocket(address, name) {
 }
 
 function umSuccess(stream) {
-	var vid = document.getElementById('videoel');
+    var vid = document.getElementById('videoel');
     if (vid.mozCaptureStream) {
         vid.mozSrcObject = stream;
     } else {

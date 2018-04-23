@@ -124,16 +124,18 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         print("WebSocket connection open.")
 
     def onMessage(self, payload, isBinary):
-    	self.frameNum = self.frameNum + 1
-    	print("Received paylod number : "+str(self.frameNum))
+        self.frameNum = self.frameNum + 1
+        print("Received paylod number : "+str(self.frameNum))
         raw = payload.decode('utf8')
         msg = json.loads(raw)
         print("Received {} message of length {}.".format(
             msg['type'], len(raw)))
+
         if msg['type'] == "TRAINING":
             self.training = msg['val']
             if not self.training:
                 self.trainSVM()
+
         elif msg['type'] == "INFO":
             print("Name of the person is : ")
             print(msg['name'])
@@ -142,17 +144,24 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print(msg['mail'])
             self.MailID = msg['mail']
             self.sendMessage('{"type": "END_FACE_COLLECTION"}')
+
         elif msg['type'] == "STOPPED_ACK":
-        	self.storefaces()
+            print("Storing Faces-------------------------------------")
+            self.storefaces()
+            print(self.uniqueID)
+            self.sendMessage('{"type": "STORED_PAGE2", "id": ' + self.uniqueID + '}')
+
         elif msg['type'] == "NULL":
             self.sendMessage('{"type": "NULL"}')
+
         elif msg['type'] == "FRAME":
             print("received frame")
-            self.processFrame(msg['dataURL'], msg['identity'])
+            self.processFrame(msg['dataURL'], msg['identity'], msg['ID'])
             self.sendMessage('{"type": "PROCESSED"}')
 
         elif msg['type'] == "register_click":
             print(msg['val'])
+
         elif msg['type'] == "UPDATE_IDENTITY":
             h = msg['hash'].encode('ascii', 'ignore')
             if h in self.images:
@@ -161,6 +170,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                     self.trainSVM()
             else:
                 print("Image not found.")
+
         elif msg['type'] == "REMOVE_IMAGE":
             h = msg['hash'].encode('ascii', 'ignore')
             if h in self.images:
@@ -169,43 +179,45 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                     self.trainSVM()
             else:
                 print("Image not found.")
+
         elif msg['type'] == 'REQ_TSNE':
             self.sendTSNE(msg['people'])
-        else:        	
+        else:           
             print("Warning: Unknown message type: {}".format(msg['type']))
-    def storefaces(self):
-    	
-    	#Generating Unique Id to user
-    	ts = time.time()
-    	self.uniqueID = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
-    	print(self.uniqueID)
-    	
-    	#Storing User Details in CSV file
-    	d = {'ID': [self.uniqueID], 'Name':[self.UName], 'Mail':[self.MailID] }
-    	data = pd.DataFrame(data = d)
-    	with open('User_Details.csv', 'a') as f:
-    		data.to_csv(f, header = False)
 
-    	userFolder = "./training_images/"+self.uniqueID
-    	if not os.path.exists(userFolder):
-    		os.makedirs(userFolder)
-    		
-    	if os.path.exists(self.dirname):
-    		files = os.listdir(self.dirname)
-    		for f in files:
-    			shutil.move(self.dirname+"/"+f, userFolder)	
-    		#shutil.move(self.dirname, userFolder)
-    		os.rmdir(self.dirname)
-    		print("Creation moving and deletion done")
-    
+    def storefaces(self):
+        
+        #Generating Unique Id to user
+        ts = time.time()
+        self.uniqueID = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
+        print("In function storeface:",self.uniqueID)
+        
+        #Storing User Details in CSV file
+        d = {'ID': [self.uniqueID], 'Name':[self.UName], 'Mail':[self.MailID] }
+        data = pd.DataFrame(data = d)
+        with open('User_Details.csv', 'a') as f:
+            data.to_csv(f, header = False)
+
+        userFolder = "./training_images/"+self.uniqueID
+        if not os.path.exists(userFolder):
+            os.makedirs(userFolder)
+            
+        if os.path.exists(self.dirname):
+            files = os.listdir(self.dirname)
+            for f in files:
+                shutil.move(self.dirname+"/"+f, userFolder) 
+            #shutil.move(self.dirname, userFolder)
+            os.rmdir(self.dirname)
+            print("Creation, moving and deletion done")
+        
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
         print("Called Close connection")
         if os.path.exists(self.dirname):
-        	print("Inside the if", self.dirname)
-        	shutil.move(self.dirname,"./uselessFaces")
-        	#shutil.remove(self.dirname)
-        	print("Directory Moved Successful")
+            print("Inside the if", self.dirname)
+            shutil.move(self.dirname,"./uselessFaces")
+            #shutil.remove(self.dirname)
+            print("Directory Moved Successful")
 
     def loadState(self, jsImages, training, jsPeople):
         self.training = training
@@ -302,7 +314,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             ]
             self.svm = GridSearchCV(SVC(C=1), param_grid, cv=5).fit(X, y)
 
-    def processFrame(self, dataURL, identity):
+    def processFrame(self, dataURL, identity, id):
         
         head = "data:image/jpeg;base64,"
         assert(dataURL.startswith(head))
@@ -368,12 +380,18 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             else:
 
                 print("came here")
-                tempPath = self.dirname
-                if not os.path.exists(tempPath):
-                    os.makedirs(tempPath)         
+                print("Unique Id: ",id)
+                if(id == 0):
+                    tempPath = self.dirname
+                    if not os.path.exists(tempPath):
+                        os.makedirs(tempPath)         
 
-                cv2.imwrite(tempPath+"/"+str(self.frameNum)+".jpeg", alignedFace)
-
+                    cv2.imwrite(tempPath+"/"+str(self.frameNum)+".jpeg", alignedFace)
+                else:
+                    tempPath = 'training_images/'+str(id)
+                    if not os.path.exists(tempPath):
+                        os.makedirs(tempPath) 
+                    cv2.imwrite(tempPath+"/"+str(id)+str(self.frameNum)+".jpeg", alignedFace)
                 #cv2.imwrite(str(self.frameNum)+".jpeg", alignedFace)
                 rep = net.forward(alignedFace)
                 # print(rep)
