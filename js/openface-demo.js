@@ -212,7 +212,7 @@ function createSocket(address, name) {
             tok = -100;
             var UsrName = j.name;
             var mailID = j.mail;
-            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
+            socket.send(JSON.stringify({'type': 'STOPPED_ACK'}))
         }  else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
