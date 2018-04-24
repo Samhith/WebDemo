@@ -152,6 +152,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.sendMessage('{"type": "STORED_PAGE2", "id": ' + self.uniqueID + '}')
 
         elif msg['type'] == "NULL":
+            tok = 1
             self.sendMessage('{"type": "NULL"}')
 
         elif msg['type'] == "FRAME":

@@ -39,7 +39,6 @@ $.fn.pressEnter = function(fn) {
     });
  };
 
-var uniqueId = 0;
 
 function registerHbarsHelpers() {
     // http://stackoverflow.com/questions/8853396
@@ -64,7 +63,6 @@ function sendFrameLoop() {
         var cc = canvas.getContext('2d');
         cc.drawImage(vid, 0, 0, vid.width, vid.height);
         var apx = cc.getImageData(0, 0, vid.width, vid.height);
-
         var dataURL = canvas.toDataURL('image/jpeg', 0.6)
         var msg = {
             'type': 'FRAME',
@@ -201,6 +199,7 @@ function createSocket(address, name) {
             uniqueId = j.id;
             console.log(uniqueId);
             console.log("Calling page3");
+            sessionStorage.setItem("uniqueId", uniqueId); 
             window.open("page3.html");
         }  else if(j.type == "WARNING") {
             tok++;
