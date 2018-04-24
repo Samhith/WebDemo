@@ -117,4 +117,13 @@ ul.tabs li.current{
 		padding-top:10px;
 		padding-bottom:10px;
 	}
+	.successCard{
+	  background-color: beige;
+    border: 5px solid black;
+	}
+	
+	.success-header{
+		color: green;
+    padding-left: 1.55em;
+	}
 

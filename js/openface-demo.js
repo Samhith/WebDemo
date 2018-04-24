@@ -59,6 +59,7 @@ function sendFrameLoop() {
     if (tok > 0) {
         var canvas = document.createElement('canvas');
         canvas.width = vid.width;
+		
         canvas.height = vid.height;
         var cc = canvas.getContext('2d');
         cc.drawImage(vid, 0, 0, vid.width, vid.height);
@@ -78,17 +79,30 @@ function sendFrameLoop() {
 function submit_by_data(){
     var name = document.getElementById("name").value;
     var email = document.getElementById("email").value;
-    var msg = {
-        'type': 'INFO',
-        'name': name,
-        'mail' : email
-    };
-    console.log("Submiting info");
-    socket.send(JSON.stringify(msg));
-    //window.open("page3.html");
-}
-function openRegistration() {
-    window.open("page2.html","_self");
+	if(name== "" || email == ""){
+	  toastr.error('Please enter the details');
+	  return false;
+	}else{
+	 
+     var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+       if (reg.test(email) == false) 
+        {
+            toastr.error('Invalid Email Address');
+            return false;
+        }else{
+	       page3=true;
+	       $('#overlay').css('display','block');
+	       $('#formContent').css('display','none');
+           var msg = {
+            'type': 'INFO',
+            'name': name,
+            'mail' : email
+             };
+       console.log("Submiting info");
+       socket.send(JSON.stringify(msg));
+	  }
+	
+    }
 }
 function getPeopleInfoHtml() {
     var info = {'-1': 0};
@@ -175,11 +189,12 @@ function createSocket(address, name) {
         receivedTimes = [];
         tok = defaultTok;
         numNulls = 0
-
+        numwarning =0;
         socket.send(JSON.stringify({'type': 'NULL'}));
         sentTimes.push(new Date());
     }
     socket.onmessage = function(e) {
+		$('#submitbtn').attr('disabled',false);
         console.log(e);
         j = JSON.parse(e.data)
         if (j.type == "NULL") {
@@ -199,19 +214,33 @@ function createSocket(address, name) {
             uniqueId = j.id;
             console.log(uniqueId);
             console.log("Calling page3");
-            sessionStorage.setItem("uniqueId", uniqueId); 
-            window.open("page3.html");
+            sessionStorage.setItem("uniqueId", uniqueId);
+             tok=1;
+            sendFrameLoop();
+            loaded();			
+           // window.open("page3.html");
         }  else if(j.type == "WARNING") {
+			$('#submitbtn').attr('disabled',true);
             tok++;
+			numwarning++;
+			if(numwarning == 5){
+				numwarning=0;
+			  toastr.warning(j.message);
+			}
+			if(page3 == true){
+			   timeout = timeout + 5000;
+			}
             console.log(j.message)
         }  else if(j.type == "END_FACE_COLLECTION"){
             tok = -100;
             var UsrName = j.name;
             var mailID = j.mail;
             socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
-        }  else if(j.type == "PAGE3"){
-            sendFrameLoop();
-        }else if (j.type == "NEW_IMAGE") {
+        } 
+//		else if(j.type == "PAGE3"){
+           // sendFrameLoop();
+        //}
+		else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
                 identity: j.identity,
@@ -395,3 +424,21 @@ function changeServerCallback() {
         alert("Unrecognized server: " + $(this.html()));
     }
 }
+
+  function loaded()
+        {
+            uniqueId = sessionStorage.getItem("uniqueId");
+            toastr.info("This window will be closed after 30 seconds");
+            window.setTimeout(CloseMe, timeout);
+        }
+
+  function CloseMe() 
+        {
+			tok=-100;
+           // toastr.success("Saved your face successfully");
+			$('#successMsg').css('display','block');
+			$('#mainContent').css('display','none');
+			 window.setTimeout(window.location.reload(), 20000);
+           // console.log("Closing");
+			
+        }
