@@ -79,7 +79,9 @@ function sendFrameLoop() {
 function submit_by_data(){
     var name = document.getElementById("name").value;
     var email = document.getElementById("email").value;
-	if(name== "" || email == ""){
+    var mobile = document.getElementById("number").value;
+    var company = document.getElementById("company").value;
+	if(name== "" || email == "" || mobile == "" || company == ""){
 	  toastr.error('Please enter the details');
 	  return false;
 	}else{
@@ -96,7 +98,9 @@ function submit_by_data(){
            var msg = {
             'type': 'INFO',
             'name': name,
-            'mail' : email
+            'mail' : email,
+            'mobile' : mobile,
+            'company' : company
              };
        console.log("Submiting info");
        socket.send(JSON.stringify(msg));

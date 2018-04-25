@@ -110,6 +110,8 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.UName = ""
         self.MailID = ""
         self.uniqueID = ""
+        self.mobileNo = ""
+        self.org = ""
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
@@ -143,6 +145,10 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print("Mail of the person is : ")
             print(msg['mail'])
             self.MailID = msg['mail']
+            self.mobileNo = msg['mobile']
+            self.org = msg['company']
+            print(self.mobileNo)
+            print(self.org)
             self.sendMessage('{"type": "END_FACE_COLLECTION"}')
 
         elif msg['type'] == "STOPPED_ACK":
@@ -194,7 +200,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         print("In function storeface:",self.uniqueID)
         
         #Storing User Details in CSV file
-        d = {'ID': [self.uniqueID], 'Name':[self.UName], 'Mail':[self.MailID] }
+        d = {'ID': [self.uniqueID], 'Name':[self.UName], 'Mail':[self.MailID], 'Mobile':[self.mobileNo],'Organization':[self.org] }
         data = pd.DataFrame(data = d)
         with open('User_Details.csv', 'a') as f:
             data.to_csv(f, header = False)
@@ -394,7 +400,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                         os.makedirs(tempPath) 
                     cv2.imwrite(tempPath+"/"+str(id)+str(self.frameNum)+".jpeg", alignedFace)
                 #cv2.imwrite(str(self.frameNum)+".jpeg", alignedFace)
-                rep = net.forward(alignedFace)
+                #rep = net.forward(alignedFace)
                 # print(rep)
                 # if self.training:
                 #     self.images[phash] = Face(rep, identity)
