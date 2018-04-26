@@ -95,35 +95,6 @@ function startTrainingAll(){
     socket.send(JSON.stringify(msg));
 }
 
-else if (j.type == "IDENTITIES") {
-    console.log("Name is "+j.name)
-    console.log("Mail is "+j.mail)
-    console.log("Comapny is "+j.company)
-            /*var h = "Last updated: " + (new Date()).toTimeString();
-            h += "<ul>";
-            var len = j.identities.length
-            if (len > 0) {
-                for (var i = 0; i < len; i++) {
-                    var identity = "Unknown";
-                    var idIdx = j.identities[i];
-                    if (idIdx != -1) {
-                        identity = people[idIdx];
-                    }
-                    h += "<li>" + identity + "</li>";
-                }
-            } else {
-                h += "<li>Nobody detected.</li>";
-            }
-            h += "</ul>"
-            $("#peopleInVideo").html(h);
-            */
-        } else if (j.type == "ANNOTATED") {
-            console.log("Came to Annotated")
-            $("#detectedFaces").html(
-                "<img src='" + j['content'] + "' width='430px'></img>"
-                )
-        }
-
 
         function submit_by_data(){
             var name = document.getElementById("name").value;
@@ -312,7 +283,10 @@ function createSocket(address, name) {
             });
             redrawPeople();
         } else if (j.type == "IDENTITIES") {
-            var h = "Last updated: " + (new Date()).toTimeString();
+    console.log("Name is "+j.name)
+    console.log("Mail is "+j.mail)
+    console.log("Comapny is "+j.company)
+            /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
             if (len > 0) {
@@ -329,10 +303,15 @@ function createSocket(address, name) {
             }
             h += "</ul>"
             $("#peopleInVideo").html(h);
+            */
         } else if (j.type == "ANNOTATED") {
+            console.log("Came to Annotated")
             $("#detectedFaces").html(
                 "<img src='" + j['content'] + "' width='430px'></img>"
                 )
+        }
+
+
         } else if (j.type == "TSNE_DATA") {
             BootstrapDialog.show({
                 message: "<img src='" + j['content'] + "' width='100%'></img>"
