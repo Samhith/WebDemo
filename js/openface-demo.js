@@ -226,20 +226,7 @@ function createSocket(address, name) {
                 socket.send(JSON.stringify({'type': 'NULL'}));
                 sentTimes.push(new Date());
             }
-        } else if (j.type == "PROCESSED") {
-            tok++;
-			
-        }  else if(j.type == "STORED_PAGE2"){
-            uniqueId = j.id;
-            console.log(uniqueId);
-            console.log("Calling page3");
-            sessionStorage.setItem("uniqueId", uniqueId);
-             tok=1;
-            sendFrameLoop();
-        } else {
-            socket.send(JSON.stringify({'type': 'NULL'}));
-            sentTimes.push(new Date());
-        }
+        
     } else if (j.type == "PROCESSED") {
         tok++;
     }  else if(j.type == "STORED_PAGE2"){
