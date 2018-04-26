@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Training</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="vendor/css/bootstrap-dialog.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+       <!-- <div class="content">
+            <h2>Register yourself</h2>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" onclick="openRegistration()" 
+                    id="Registerbtn">
+                    Register
+                </button>
+            </span>                    
+        </div>-->
+
+<div class="modal" tabindex="-1" role="dialog"id="TrainModal" onclick="startTrainingAl()">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+       
+       <button class="mainBtn btn btn-primary modal-title"onclick="startTrainingAll()">Train All Images</button>
+       
+       <!-- <button type="button" id="Registerbtn" class="btn btn-primary"  > </button>-->
+       
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+
+  
+</body>
+<script src="vendor/js/jquery.min.js"></script>
+<script src="vendor/js/bootstrap.min.js"></script>
+<script src="vendor/js/bootstrap-toggle.min.js"></script>
+<script src="vendor/js/bootstrap-dialog.min.js"></script>
+<script src="vendor/js/handlebars.min.js"></script>
+<script src="vendor/js/jstat.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="js/openface-demo.js"></script>
+<script type="text/javascript">
+
+$('#TrainModal').modal('show');
+    
+ createSocket("wss://" + window.location.hostname + ":9000", "Local");
+
+         vidReady = false;
+         var uniqueId = 0;
+var defaultTok = 1, defaultNumNulls = 20;
+     var tok = defaultTok,
+         people = [], defaultPerson = -1,
+         images = [],
+         training = false;
+     var numNulls, sentTimes, receivedTimes;
+     var socket, socketName,numwarning,page3=false,timeout=30000;
+var test = 0;
+  // registerHbarsHelpers();      
+
+   //$("#Registerbtn").click(RegisterbtnOnClick);
+ //  createSocket("wss://" + window.location.hostname + ":9000", "Local");
+</script>
+
+</html>

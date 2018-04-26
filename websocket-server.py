@@ -19,6 +19,7 @@ import sys
 import shutil
 import time
 import datetime
+import pickle
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -83,6 +84,7 @@ align = openface.AlignDlib(args.dlibFacePredictor)
 net = openface.TorchNeuralNet(args.networkModel, imgDim=args.imgDim,
                               cuda=args.cuda)
 
+model_location = 'model.sav'
 
 class Face:
 
@@ -113,6 +115,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.uniqueID = ""
         self.mobileNo = ""
         self.org = ""
+        self.details = None
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
@@ -139,6 +142,10 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             if not self.training:
                 self.trainSVM()
 
+        elif msg['type'] == "TRAINALLIMAGES":
+            print("Calling training all images")
+            self.TrainAllImages()
+
         elif msg['type'] == "INFO":
             print("Name of the person is : ")
             print(msg['name'])
@@ -151,12 +158,12 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print(self.mobileNo)
             print(self.org)
             self.sendMessage('{"type": "END_FACE_COLLECTION"}')
-        elif msf['type'] == "TESTING":
+
+        elif msg['type'] == "TESTING":
             print("Trying to detect face")
             self.testing = True
-            processFrame_testing(self, dataURL)
-            #Load SVM
-            #self.svm = loaded SVM
+            self.processFrame_testing(msg['dataURL'])
+            self.sendMessage('{"type": "PROCESSED" }')
 
         elif msg['type'] == "STOPPED_ACK":
             print("Storing Faces-------------------------------------")
@@ -327,6 +334,28 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                  'kernel': ['rbf']}
             ]
             self.svm = GridSearchCV(SVC(C=1), param_grid, cv=5).fit(X, y)
+            pickle.dump(self.svm, open(model_location, 'wb'))
+            print("Saved in the SVM to model.sav file")
+
+    def TrainAllImages(self):
+        # Loading Data into self.images
+        os.chdir('./training_images')
+        for fname in os.listdir("."):
+            if os.path.isdir(fname):
+                print("Reading images in ", fname)
+                self.people.append(int(fname))
+                for i in os.listdir(fname):
+                    alignedFace = cv2.imread(os.path.join(fname,i))
+                    img = net.forward(alignedFace)
+                    #print(len(img))
+                    rep = Face(np.array(img), int(fname))
+                    #print(rep)
+                    phash = str(imagehash.phash(Image.fromarray(alignedFace)))
+                    self.images[phash] = rep
+        os.chdir('..')
+        self.trainSVM()
+        
+
 
     def processFrame(self, dataURL, identity, id):
         
@@ -479,7 +508,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         #     plt.close()
         #     self.sendMessage(json.dumps(msg))
 
-def processFrame_testing(self, dataURL):
+    def processFrame_testing(self, dataURL):
         
         head = "data:image/jpeg;base64,"
         assert(dataURL.startswith(head))
@@ -502,10 +531,18 @@ def processFrame_testing(self, dataURL):
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     return
 
-        ####### self.svm = loaded SVM (Load svm)
+        ####### loading SVM (Load svm)
+        if self.svm is None:
+            print("Loading SVM model file")
+            self.svm = pickle.load(open(model_location, 'rb'))
+            print(self.svm)
 
+        #Opening CSV
+        if self.details is None:
+            self.details = pd.read_csv('User_Details.csv')
 
         #identities = []
+        identity = -1
         # bbs = align.getAllFaceBoundingBoxes(rgbFrame)
 
         assert rgbFrame is not None
@@ -564,12 +601,13 @@ def processFrame_testing(self, dataURL):
                 #    self.sendMessage(json.dumps(msg))
                 #else
                 if self.testing:
-                    if len(self.people) == 0:
-                        identity = -1
-                    elif len(self.people) == 1:
-                        identity = 0
-                    elif self.svm:
-                        identity = self.svm.predict(rep)[0]
+                    #if len(self.people) == 0:
+                    #    identity = -1
+                    #elif len(self.people) == 1:
+                    #    identity = 0
+                    if self.svm:
+                        print("Came here")
+                        identity = self.svm.predict(rep.tolist())[0]
                     else:
                         print("hhh")
                         identity = -1
@@ -592,17 +630,22 @@ def processFrame_testing(self, dataURL):
                         name = "Unknown"
                 else:
                     #name = self.people[identity]
-                    #name = load the details from csv based on unique Id
-                    name  = "Eshwar"
+                    details = self.details[self.details['ID']==identity]
+                    #print(details)
+                    name  = details['Name'].values[0]
+                    print(name)
                 cv2.putText(annotatedFrame, name, (bb.left(), bb.top() - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.75,
                             color=(152, 255, 204), thickness=2)
 
         # if not self.training:
-        if self.testing:
+        if identity!=-1 and self.testing:
             msg = {
                 "type": "IDENTITIES",
-                "identities": identity
+                "identities": identity,
+                "name": details['Name'].values[0],
+                "mail": details['Mail'].values[0],
+                "company": details['Company'].values[0]
             }
             self.sendMessage(json.dumps(msg))
 

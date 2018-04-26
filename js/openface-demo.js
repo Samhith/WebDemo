@@ -53,7 +53,7 @@ function sendFrameLoop() {
     if (socket == null || socket.readyState != socket.OPEN ||
         !vidReady || numNulls != defaultNumNulls) {
         return;
-}
+    }
 
 if (tok > 0) {
     var canvas = document.createElement('canvas');
@@ -95,50 +95,20 @@ function startTrainingAll(){
     socket.send(JSON.stringify(msg));
 }
 
-else if (j.type == "IDENTITIES") {
-    console.log("Name is "+j.name)
-    console.log("Mail is "+j.mail)
-    console.log("Comapny is "+j.company)
-            /*var h = "Last updated: " + (new Date()).toTimeString();
-            h += "<ul>";
-            var len = j.identities.length
-            if (len > 0) {
-                for (var i = 0; i < len; i++) {
-                    var identity = "Unknown";
-                    var idIdx = j.identities[i];
-                    if (idIdx != -1) {
-                        identity = people[idIdx];
-                    }
-                    h += "<li>" + identity + "</li>";
-                }
-            } else {
-                h += "<li>Nobody detected.</li>";
-            }
-            h += "</ul>"
-            $("#peopleInVideo").html(h);
-            */
-        } else if (j.type == "ANNOTATED") {
-            console.log("Came to Annotated")
-            $("#detectedFaces").html(
-                "<img src='" + j['content'] + "' width='430px'></img>"
-                )
-        }
-
-
-        function submit_by_data(){
-            var name = document.getElementById("name").value;
-            var email = document.getElementById("email").value;
-            var mobile = document.getElementById("number").value;
-            var company = document.getElementById("company").value;
-            if(name== "" || email == "" || mobile == "" || company == ""){
-             toastr.error('Please enter the details');
-             return false;
-         }else{
-          
-           var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-           var mobilereg = /^[2-9]{2}[0-9]{8}$/;
-           if (reg.test(email) == false) 
-           {
+function submit_by_data(){
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var mobile = document.getElementById("number").value;
+    var company = document.getElementById("company").value;
+    if(name== "" || email == "" || mobile == "" || company == ""){
+        toastr.error('Please enter the details');
+        return false;
+    }else{
+    
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        var mobilereg = /^[2-9]{2}[0-9]{8}$/;
+        if (reg.test(email) == false) 
+        {
             toastr.error('Invalid Email Address');
             return false;
         }else if(mobilereg.test(mobile) == false){
@@ -266,26 +236,54 @@ function createSocket(address, name) {
       console.log(e);
       j = JSON.parse(e.data)
       if (j.type == "NULL") {
-        receivedTimes.push(new Date());
-        numNulls++;
-        if (numNulls == defaultNumNulls) {
-            updateRTT();
-            sendState();
+                receivedTimes.push(new Date());
+                numNulls++;
+                if (numNulls == defaultNumNulls) {
+                    updateRTT();
+                    sendState();
+                    sendFrameLoop();
+                } 
+                else {
+                    socket.send(JSON.stringify({'type': 'NULL'}));
+                    sentTimes.push(new Date());
+                }
+        } else if (j.type == "PROCESSED") {
+            tok++;
+        }  else if (j.type == "IDENTITIES") {
+            console.log("Name is "+j.name)
+            console.log("Mail is "+j.mail)
+            console.log("Comapny is "+j.company)
+                /*var h = "Last updated: " + (new Date()).toTimeString();
+                h += "<ul>";
+                var len = j.identities.length
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var identity = "Unknown";
+                        var idIdx = j.identities[i];
+                        if (idIdx != -1) {
+                            identity = people[idIdx];
+                        }
+                        h += "<li>" + identity + "</li>";
+                    }
+                } else {
+                    h += "<li>Nobody detected.</li>";
+                }
+                h += "</ul>"
+                $("#peopleInVideo").html(h);
+                */
+        } else if (j.type == "ANNOTATED") {
+            console.log("Came to Annotated")
+            $("#detectedFaces").html(
+                "<img src='" + j['content'] + "' width='430px'></img>"
+                )
+        } else if(j.type == "STORED_PAGE2"){
+            uniqueId = j.id;
+            console.log(uniqueId);
+            console.log("Calling page3");
+            sessionStorage.setItem("uniqueId", uniqueId);
+            tok=1;
             sendFrameLoop();
-        } else {
-            socket.send(JSON.stringify({'type': 'NULL'}));
-            sentTimes.push(new Date());
-        }
-    } else if (j.type == "PROCESSED") {
-        tok++;
-    }  else if(j.type == "STORED_PAGE2"){
-        uniqueId = j.id;
-        console.log(uniqueId);
-        console.log("Calling page3");
-        sessionStorage.setItem("uniqueId", uniqueId);
-        tok=1;
-        sendFrameLoop();
-        loaded();			
+            loaded();	
            // window.open("page3.html");
        }  else if(j.type == "WARNING") {
          $('#submitbtn').attr('disabled',true);
@@ -299,16 +297,13 @@ function createSocket(address, name) {
           timeout = timeout + 5000;
       }
       console.log(j.message)
-  }  else if(j.type == "END_FACE_COLLECTION"){
-    tok = -100;
-    var UsrName = j.name;
-    var mailID = j.mail;
-    socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
-} 
-//		else if(j.type == "PAGE3"){
-           // sendFrameLoop();
-        //}
-        else if (j.type == "NEW_IMAGE") {
+      }  else if(j.type == "END_FACE_COLLECTION"){
+        tok = -100;
+        var UsrName = j.name;
+        var mailID = j.mail;
+        socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
+
+      }  else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
                 identity: j.identity,
@@ -317,7 +312,10 @@ function createSocket(address, name) {
             });
             redrawPeople();
         } else if (j.type == "IDENTITIES") {
-            var h = "Last updated: " + (new Date()).toTimeString();
+            onsole.log("Name is "+j.name)
+            console.log("Mail is "+j.mail)
+            console.log("Comapny is "+j.company)
+            /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
             if (len > 0) {
@@ -334,10 +332,11 @@ function createSocket(address, name) {
             }
             h += "</ul>"
             $("#peopleInVideo").html(h);
+        */
         } else if (j.type == "ANNOTATED") {
             $("#detectedFaces").html(
                 "<img src='" + j['content'] + "' width='430px'></img>"
-                )
+            )
         } else if (j.type == "TSNE_DATA") {
             BootstrapDialog.show({
                 message: "<img src='" + j['content'] + "' width='100%'></img>"
