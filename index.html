@@ -52,7 +52,7 @@
 					Please wait till the page closes automatically.
                 </div>	
                 <div id='tab-preview' class='tab-content'>
-				   <div class="overlay" id="overlay" style="display:none;" width="400" height="300"></div>
+				   <div class="overlay" id="overlay" style="display:none;" width="415" height="300"></div>
                     <video id="videoel" width="400" height="300"
                            preload="auto" loop autoplay></video>
                 </div>
@@ -142,6 +142,7 @@ var defaultTok = 1, defaultNumNulls = 20;
          people = [], defaultPerson = -1,
          images = [],
          training = false;
+         test = 0;
      var numNulls, sentTimes, receivedTimes;
      var socket, socketName,numwarning,page3=false,timeout=30000;
      
@@ -162,7 +163,6 @@ opacity:0.5;
 width:400px !important;
 height:300px !important;
     z-index: 2;
-	background-position: 60px 4px !important;
 	background:url('./models/img/head_turn_animation.gif') no-repeat;
     opacity: 0.5;
 }

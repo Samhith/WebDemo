@@ -151,7 +151,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print(self.mobileNo)
             print(self.org)
             self.sendMessage('{"type": "END_FACE_COLLECTION"}')
-        elif msf['type'] == "TESTING":
+        elif msg['type'] == "TESTING":
             print("Trying to detect face")
             self.testing = True
             processFrame_testing(self, dataURL)

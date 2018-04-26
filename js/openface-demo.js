@@ -269,9 +269,9 @@ function createSocket(address, name) {
             });
             redrawPeople();
         } else if (j.type == "IDENTITIES") {
-    console.log("Name is "+j.name)
-    console.log("Mail is "+j.mail)
-    console.log("Comapny is "+j.company)
+            console.log("Name is "+j.name)
+            console.log("Mail is "+j.mail)
+            console.log("Comapny is "+j.company)
             /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
@@ -295,8 +295,6 @@ function createSocket(address, name) {
             $("#detectedFaces").html(
                 "<img src='" + j['content'] + "' width='430px'></img>"
                 )
-        }
-
 
         } else if (j.type == "TSNE_DATA") {
             BootstrapDialog.show({
