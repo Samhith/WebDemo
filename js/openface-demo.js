@@ -122,7 +122,6 @@ function startTrainingAll(){
     }
     
 }
-}
 function getPeopleInfoHtml() {
     var info = {'-1': 0};
     var len = people.length;
