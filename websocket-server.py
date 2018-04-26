@@ -102,6 +102,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         super(OpenFaceServerProtocol, self).__init__()
         self.images = {}
         self.training = True
+        self.testing = False
         self.people = []
         self.svm = None
         self.frameNum = 0
@@ -150,6 +151,12 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print(self.mobileNo)
             print(self.org)
             self.sendMessage('{"type": "END_FACE_COLLECTION"}')
+        elif msf['type'] == "TESTING":
+            print("Trying to detect face")
+            self.testing = True
+            processFrame_testing(self, dataURL)
+            #Load SVM
+            #self.svm = loaded SVM
 
         elif msg['type'] == "STOPPED_ACK":
             print("Storing Faces-------------------------------------")
@@ -472,6 +479,149 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         #     plt.close()
         #     self.sendMessage(json.dumps(msg))
 
+def processFrame_testing(self, dataURL):
+        
+        head = "data:image/jpeg;base64,"
+        assert(dataURL.startswith(head))
+        imgdata = base64.b64decode(dataURL[len(head):])
+        imgF = StringIO.StringIO()
+        imgF.write(imgdata)
+        imgF.seek(0)
+        img = Image.open(imgF)
+
+        buf = np.fliplr(np.asarray(img))
+        rgbFrame = np.zeros((300, 400, 3), dtype=np.uint8)
+        rgbFrame[:, :, 0] = buf[:, :, 2]
+        rgbFrame[:, :, 1] = buf[:, :, 1]
+        rgbFrame[:, :, 2] = buf[:, :, 0]
+
+        if self.testing:
+            annotatedFrame = np.copy(buf)
+
+        # cv2.imshow('frame', rgbFrame)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     return
+
+        ####### self.svm = loaded SVM (Load svm)
+
+
+        #identities = []
+        # bbs = align.getAllFaceBoundingBoxes(rgbFrame)
+
+        assert rgbFrame is not None
+        bbs = align.getAllFaceBoundingBoxes(rgbFrame)
+        print(len(bbs))
+        if len(bbs) > 1:
+            print("More than one person in front of cam")
+            msg = {
+                 "type": "WARNING",
+                 "message": "Please make ensure only one person is infront of the cam"
+             }
+            self.sendMessage(json.dumps(msg))
+            return
+
+        if len(bbs) == 0:
+            print("No human face detected")
+            msg = {
+                 "type": "WARNING",
+                 "message": "No face found, please be present in front of the camera, alone!!"
+             }
+            self.sendMessage(json.dumps(msg))
+            return
+        
+        ##------------------End of Handling no face or more than one face ----------------------------------
+
+        bb = align.getLargestFaceBoundingBox(rgbFrame)
+        bbs = [bb] if bb is not None else []
+        for bb in bbs:
+            # print(len(bbs))
+            landmarks = align.findLandmarks(rgbFrame, bb)
+            alignedFace = align.align(args.imgDim, rgbFrame, bb,
+                                      landmarks=landmarks,
+                                      landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+            if alignedFace is None:
+                continue
+
+            phash = str(imagehash.phash(Image.fromarray(alignedFace)))
+            if phash in self.images:
+                identity = self.images[phash].identity
+            else:
+                rep = net.forward(alignedFace)
+                #print(rep)
+                #if self.training:
+                #    self.images[phash] = Face(rep, identity)
+                #    # TODO: Transferring as a string is suboptimal.
+                #    content = [str(x) for x in cv2.resize(alignedFace, (0,0),
+                #    fx=0.5, fy=0.5).flatten()]
+                #    content = [str(x) for x in alignedFace.flatten()]
+                #    msg = {
+                #        "type": "NEW_IMAGE",
+                #        "hash": phash,
+                #        "content": content,
+                #        "identity": identity,
+                #        "representation": rep.tolist()
+                #    }
+                #    self.sendMessage(json.dumps(msg))
+                #else
+                if self.testing:
+                    if len(self.people) == 0:
+                        identity = -1
+                    elif len(self.people) == 1:
+                        identity = 0
+                    elif self.svm:
+                        identity = self.svm.predict(rep)[0]
+                    else:
+                        print("hhh")
+                        identity = -1
+                    #if identity not in identities:
+                    #    identities.append(identity)
+
+            #if not self.training:
+            if self.testing:
+                bl = (bb.left(), bb.bottom())
+                tr = (bb.right(), bb.top())
+                cv2.rectangle(annotatedFrame, bl, tr, color=(153, 255, 204),
+                              thickness=3)
+                for p in openface.AlignDlib.OUTER_EYES_AND_NOSE:
+                    cv2.circle(annotatedFrame, center=landmarks[p], radius=3,
+                               color=(102, 204, 255), thickness=-1)
+                if identity == -1:
+                    if len(self.people) == 1:
+                        name = self.people[0]
+                    else:
+                        name = "Unknown"
+                else:
+                    #name = self.people[identity]
+                    #name = load the details from csv based on unique Id
+                    name  = "Eshwar"
+                cv2.putText(annotatedFrame, name, (bb.left(), bb.top() - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.75,
+                            color=(152, 255, 204), thickness=2)
+
+        # if not self.training:
+        if self.testing:
+            msg = {
+                "type": "IDENTITIES",
+                "identities": identity
+            }
+            self.sendMessage(json.dumps(msg))
+
+            plt.figure()
+            plt.imshow(annotatedFrame)
+            plt.xticks([])
+            plt.yticks([])
+
+            imgdata = StringIO.StringIO()
+            plt.savefig(imgdata, format='png')
+            imgdata.seek(0)
+            content = 'data:image/png;base64,' + \
+                urllib.quote(base64.b64encode(imgdata.buf))
+            msg = {
+                "type": "ANNOTATED",
+                "content": content
+            }
+            plt.close()
+            self.sendMessage(json.dumps(msg))
 
 def main(reactor):
     log.startLogging(sys.stdout)

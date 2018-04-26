@@ -13,17 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */  
 navigator.getUserMedia = navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ?
-        function(c, os, oe) {
-            navigator.mediaDevices.getUserMedia(c).then(os,oe);
-        } : null ||
-    navigator.msGetUserMedia;
+navigator.webkitGetUserMedia ||
+(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ?
+function(c, os, oe) {
+    navigator.mediaDevices.getUserMedia(c).then(os,oe);
+} : null ||
+navigator.msGetUserMedia;
 
 window.URL = window.URL ||
-    window.webkitURL ||
-    window.msURL ||
-    window.mozURL;
+window.webkitURL ||
+window.msURL ||
+window.mozURL;
 
 // http://stackoverflow.com/questions/6524288
 $.fn.pressEnter = function(fn) {
@@ -34,10 +34,10 @@ $.fn.pressEnter = function(fn) {
             if(e.keyCode == 13)
             {
               $(this).trigger("enterPress");
-            }
-        })
+          }
+      })
     });
- };
+};
 
 
 function registerHbarsHelpers() {
@@ -49,79 +49,128 @@ function registerHbarsHelpers() {
         return options.inverse(this);
     });
 }
-
 function sendFrameLoop() {
     if (socket == null || socket.readyState != socket.OPEN ||
         !vidReady || numNulls != defaultNumNulls) {
         return;
-    }
+}
 
-    if (tok > 0) {
-        var canvas = document.createElement('canvas');
-        canvas.width = vid.width;
-		
-        canvas.height = vid.height;
-        var cc = canvas.getContext('2d');
-        cc.drawImage(vid, 0, 0, vid.width, vid.height);
-        var apx = cc.getImageData(0, 0, vid.width, vid.height);
-        var dataURL = canvas.toDataURL('image/jpeg', 0.6)
+if (tok > 0) {
+    var canvas = document.createElement('canvas');
+    canvas.width = vid.width;
+    
+    canvas.height = vid.height;
+    var cc = canvas.getContext('2d');
+    cc.drawImage(vid, 0, 0, vid.width, vid.height);
+    var apx = cc.getImageData(0, 0, vid.width, vid.height);
+    var dataURL = canvas.toDataURL('image/jpeg', 0.6);
+    if(test == 1){
+        var msg = {
+            'type': 'TESTING',
+            'dataURL': dataURL,
+            'identity': defaultPerson,
+            "ID": uniqueId
+        };
+    }
+    else{
         var msg = {
             'type': 'FRAME',
             'dataURL': dataURL,
             'identity': defaultPerson,
             "ID": uniqueId
-            };
-        socket.send(JSON.stringify(msg));
-        tok--;
+        };
     }
-    setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 250);
+    
+    socket.send(JSON.stringify(msg));
+    tok--;
 }
-function submit_by_data(){
-    var name = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
-    var mobile = document.getElementById("number").value;
-    var company = document.getElementById("company").value;
-	if(name== "" || email == "" || mobile == "" || company == ""){
-	  toastr.error('Please enter the details');
-	  return false;
-	}else{
-	 
-     var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-	 var mobilereg = /^[2-9]{2}[0-9]{8}$/;
-       if (reg.test(email) == false) 
-        {
+setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 250);
+}
+
+function startTrainingAll(){
+    console.log("Calling train all images");
+    var msg = {
+        'type': 'TRAINALLIMAGES',
+    };
+    socket.send(JSON.stringify(msg));
+}
+
+else if (j.type == "IDENTITIES") {
+    console.log("Name is "+j.name)
+    console.log("Mail is "+j.mail)
+    console.log("Comapny is "+j.company)
+            /*var h = "Last updated: " + (new Date()).toTimeString();
+            h += "<ul>";
+            var len = j.identities.length
+            if (len > 0) {
+                for (var i = 0; i < len; i++) {
+                    var identity = "Unknown";
+                    var idIdx = j.identities[i];
+                    if (idIdx != -1) {
+                        identity = people[idIdx];
+                    }
+                    h += "<li>" + identity + "</li>";
+                }
+            } else {
+                h += "<li>Nobody detected.</li>";
+            }
+            h += "</ul>"
+            $("#peopleInVideo").html(h);
+            */
+        } else if (j.type == "ANNOTATED") {
+            console.log("Came to Annotated")
+            $("#detectedFaces").html(
+                "<img src='" + j['content'] + "' width='430px'></img>"
+                )
+        }
+
+
+        function submit_by_data(){
+            var name = document.getElementById("name").value;
+            var email = document.getElementById("email").value;
+            var mobile = document.getElementById("number").value;
+            var company = document.getElementById("company").value;
+            if(name== "" || email == "" || mobile == "" || company == ""){
+             toastr.error('Please enter the details');
+             return false;
+         }else{
+          
+           var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+           var mobilereg = /^[2-9]{2}[0-9]{8}$/;
+           if (reg.test(email) == false) 
+           {
             toastr.error('Invalid Email Address');
             return false;
         }else if(mobilereg.test(mobile) == false){
-			toastr.error('Invalid Mobile Number');
-            return false;
-		}else{
-	       page3=true;
-	       $('#overlay').css('display','block');
-	       $('#formContent').css('display','none');
-		   $('#countdownExample').css('display','block');
-		    var timer = new Timer();
-            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
-              $('#countdownExample .values').html(timer.getTimeValues().toString());
-              timer.addEventListener('secondsUpdated', function (e) {
-               $('#countdownExample .values').html(timer.getTimeValues().toString());
-              });
-            timer.addEventListener('targetAchieved', function (e) {
+         toastr.error('Invalid Mobile Number');
+         return false;
+     }else{
+        page3=true;
+        $('#overlay').css('display','block');
+        $('#formContent').css('display','none');
+        $('#countdownExample').css('display','block');
+        var timer = new Timer();
+        timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
+        $('#countdownExample .values').html(timer.getTimeValues().toString());
+        timer.addEventListener('secondsUpdated', function (e) {
+         $('#countdownExample .values').html(timer.getTimeValues().toString());
+     });
+        timer.addEventListener('targetAchieved', function (e) {
             $('#countdownExample .values').html('NICE TO SEE YOU !!');
-              });
-          
-           var msg = {
+        });
+        
+        var msg = {
             'type': 'INFO',
             'name': name,
             'mail' : email,
             'mobile' : mobile,
             'company' : company
-             };
-       console.log("Submiting info");
-       socket.send(JSON.stringify(msg));
-	  }
-	
+        };
+        console.log("Submiting info");
+        socket.send(JSON.stringify(msg));
     }
+    
+}
 }
 function getPeopleInfoHtml() {
     var info = {'-1': 0};
@@ -183,8 +232,8 @@ function updateRTT() {
     }
     $("#rtt-"+socketName).html(
         jStat.mean(diffs).toFixed(2) + " ms (σ = " +
-            jStat.stdev(diffs).toFixed(2) + ")"
-    );
+        jStat.stdev(diffs).toFixed(2) + ")"
+        );
 }
 
 function sendState() {
@@ -213,53 +262,53 @@ function createSocket(address, name) {
         sentTimes.push(new Date());
     }
     socket.onmessage = function(e) {
-		$('#submitbtn').attr('disabled',false);
-        console.log(e);
-        j = JSON.parse(e.data)
-        if (j.type == "NULL") {
-            receivedTimes.push(new Date());
-            numNulls++;
-            if (numNulls == defaultNumNulls) {
-                updateRTT();
-                sendState();
-                sendFrameLoop();
-            } else {
-                socket.send(JSON.stringify({'type': 'NULL'}));
-                sentTimes.push(new Date());
-            }
-        } else if (j.type == "PROCESSED") {
-            tok++;
-        }  else if(j.type == "STORED_PAGE2"){
-            uniqueId = j.id;
-            console.log(uniqueId);
-            console.log("Calling page3");
-            sessionStorage.setItem("uniqueId", uniqueId);
-             tok=1;
+      $('#submitbtn').attr('disabled',false);
+      console.log(e);
+      j = JSON.parse(e.data)
+      if (j.type == "NULL") {
+        receivedTimes.push(new Date());
+        numNulls++;
+        if (numNulls == defaultNumNulls) {
+            updateRTT();
+            sendState();
             sendFrameLoop();
-            loaded();			
+        } else {
+            socket.send(JSON.stringify({'type': 'NULL'}));
+            sentTimes.push(new Date());
+        }
+    } else if (j.type == "PROCESSED") {
+        tok++;
+    }  else if(j.type == "STORED_PAGE2"){
+        uniqueId = j.id;
+        console.log(uniqueId);
+        console.log("Calling page3");
+        sessionStorage.setItem("uniqueId", uniqueId);
+        tok=1;
+        sendFrameLoop();
+        loaded();			
            // window.open("page3.html");
-        }  else if(j.type == "WARNING") {
-			$('#submitbtn').attr('disabled',true);
-            tok++;
-			numwarning++;
-			if(numwarning == 5){
-				numwarning=0;
-			  toastr.warning(j.message);
-			}
-			if(numwarning == 10 && page3 == true){
-			   timeout = timeout + 5000;
-			}
-            console.log(j.message)
-        }  else if(j.type == "END_FACE_COLLECTION"){
-            tok = -100;
-            var UsrName = j.name;
-            var mailID = j.mail;
-            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
-        } 
+       }  else if(j.type == "WARNING") {
+         $('#submitbtn').attr('disabled',true);
+         tok++;
+         numwarning++;
+         if(numwarning == 5){
+            numwarning=0;
+            toastr.warning(j.message);
+        }
+        if(numwarning == 10 && page3 == true){
+          timeout = timeout + 5000;
+      }
+      console.log(j.message)
+  }  else if(j.type == "END_FACE_COLLECTION"){
+    tok = -100;
+    var UsrName = j.name;
+    var mailID = j.mail;
+    socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
+} 
 //		else if(j.type == "PAGE3"){
            // sendFrameLoop();
         //}
-		else if (j.type == "NEW_IMAGE") {
+        else if (j.type == "NEW_IMAGE") {
             images.push({
                 hash: j.hash,
                 identity: j.identity,
@@ -288,7 +337,7 @@ function createSocket(address, name) {
         } else if (j.type == "ANNOTATED") {
             $("#detectedFaces").html(
                 "<img src='" + j['content'] + "' width='430px'></img>"
-            )
+                )
         } else if (j.type == "TSNE_DATA") {
             BootstrapDialog.show({
                 message: "<img src='" + j['content'] + "' width='100%'></img>"
@@ -314,7 +363,7 @@ function umSuccess(stream) {
         vid.mozSrcObject = stream;
     } else {
         vid.src = (window.URL && window.URL.createObjectURL(stream)) ||
-            stream;
+        stream;
     }
     vid.play();
     vidReady = true;
@@ -419,45 +468,45 @@ function removeImage(hash) {
 function changeServerCallback() {
     $(this).addClass("active").siblings().removeClass("active");
     switch ($(this).html()) {
-    case "Local":
+        case "Local":
         socket.close();
         redrawPeople();
         createSocket("wss:" + window.location.hostname + ":9000", "Local");
         break;
-    case "CMU":
+        case "CMU":
         socket.close();
         redrawPeople();
         createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
         break;
-    case "AWS East":
+        case "AWS East":
         socket.close();
         redrawPeople();
         createSocket("wss://54.159.128.49:9000", "AWS-East");
         break;
-    case "AWS West":
+        case "AWS West":
         socket.close();
         redrawPeople();
         createSocket("wss://54.188.234.61:9000", "AWS-West");
         break;
-    default:
+        default:
         alert("Unrecognized server: " + $(this.html()));
     }
 }
 
-  function loaded()
-        {
-            uniqueId = sessionStorage.getItem("uniqueId");
-            toastr.info("This window will be closed after 30 seconds");
-            window.setTimeout(CloseMe, timeout);
-        }
+function loaded()
+{
+    uniqueId = sessionStorage.getItem("uniqueId");
+    toastr.info("This window will be closed after 30 seconds");
+    window.setTimeout(CloseMe, timeout);
+}
 
-  function CloseMe() 
-        {
-			tok=-100;
+function CloseMe() 
+{
+ tok=-100;
            // toastr.success("Saved your face successfully");
-			$('#successMsg').css('display','block');
-			$('#mainContent').css('display','none');
-			 window.setTimeout(window.location.reload(), 20000);
+           $('#successMsg').css('display','block');
+           $('#mainContent').css('display','none');
+           window.setTimeout(window.location.reload(), 20000);
            // console.log("Closing");
-			
-        }
+           
+       }
