@@ -18,7 +18,7 @@
   <div class="modal-dialog" role="document" style="margin-top:100px;">
     <div class="modal-content">
       <div class="modal-header">
-         <img class="mainImg" src='./models/img/mainimage.gif' />
+       <img class="mainImg" src='./models/img/loader-ai-siri_2x.gif' />
 	   </div>
 	   <div class="modal-footer">
        <button class="mainBtn btn btn-primary modal-title"onclick="openRegistration()">Make me your Friend<span class="glyphicon glyphicon-camera marginLeft" style="color:white;"></span></button>
@@ -28,11 +28,29 @@
     </div>
   </div>
 </div>
+  <div class="modal" id="pageMsgModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title marginLeft">INFO<span style="color:#337ab7;" class="glyphicon glyphicon-info-sign marginLeft"></span></h5>
+      </div>
+      <div class="modal-body modalText">
+        <p>Make sure your only your face comes in the camera.Avoid multiple faces and ensure proper lighting on your face</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="center btn btn-primary" onclick="closeModal()">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="mainContent" style="display:none;">
  <div class="row">
   <div class="col-sm-4"></div>
   <div class="card col-sm-4">
-
+                <div class="alert alert-primary" id="userInfo" role="alert" style="display:none;">
+                    This window closes after 30 seconds.Sometimes our AI may take some more seconds to learn you.
+					Please wait till the page closes automatically.
+                </div>	
                 <div id='tab-preview' class='tab-content'>
 				   <div class="overlay" id="overlay" style="display:none;" width="400" height="300"></div>
                     <video id="videoel" width="400" height="300"
@@ -71,14 +89,16 @@
 	 
 	</div>
   </div>
+ 
   <div id="successMsg"style="display:none;">
      <div class="row">
          <div class="col-sm-4"></div>
          <div class="card successCard col-sm-4">
-                   <h2 class="center success-header">Registered Successfully</h2>
+                   <h2 class="center success-header">See you soon once I'm trained and deployed back !!!</h2>
          </div>
      </div>
   </div>
+ 
 </body>
 <script src="vendor/js/jquery.min.js"></script>
 <script src="vendor/js/bootstrap.min.js"></script>
@@ -93,6 +113,7 @@
 <script type="text/javascript">
 
 $('#RegisterModal').modal('show');
+
 function openRegistration() {
 
 	$('#mainContent').css('display','block');
@@ -124,7 +145,6 @@ var defaultTok = 1, defaultNumNulls = 20;
      var numNulls, sentTimes, receivedTimes;
      var socket, socketName,numwarning,page3=false,timeout=30000;
      
-    
 
   // registerHbarsHelpers();      
 
@@ -143,12 +163,11 @@ width:400px !important;
 height:300px !important;
     z-index: 2;
 	background-position: 60px 4px !important;
-	background:url('./models/img/smiley.gif') no-repeat;
+	background:url('./models/img/head_turn_animation.gif') no-repeat;
     opacity: 0.5;
 }
 .mainImg{
-  width: 400px;
-    margin-left: 45px;
+  width: 498px;
 }
 </style>
 </html>

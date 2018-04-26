@@ -136,38 +136,18 @@ else if (j.type == "IDENTITIES") {
          }else{
           
            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-           var mobilereg = /^[2-9]{2}[0-9]{8}$/;
+           var mobilereg = /^[0-9]{2}[0-9]{8}$/;
            if (reg.test(email) == false) 
            {
             toastr.error('Invalid Email Address');
             return false;
         }else if(mobilereg.test(mobile) == false){
-         toastr.error('Invalid Mobile Number');
-         return false;
-     }else{
-        page3=true;
-        $('#overlay').css('display','block');
-        $('#formContent').css('display','none');
-        $('#countdownExample').css('display','block');
-        var timer = new Timer();
-        timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
-        $('#countdownExample .values').html(timer.getTimeValues().toString());
-        timer.addEventListener('secondsUpdated', function (e) {
-         $('#countdownExample .values').html(timer.getTimeValues().toString());
-     });
-        timer.addEventListener('targetAchieved', function (e) {
-            $('#countdownExample .values').html('NICE TO SEE YOU !!');
-        });
-        
-        var msg = {
-            'type': 'INFO',
-            'name': name,
-            'mail' : email,
-            'mobile' : mobile,
-            'company' : company
-        };
-        console.log("Submiting info");
-        socket.send(JSON.stringify(msg));
+			toastr.error('Invalid Mobile Number');
+            return false;
+		}else{
+			$('#pageMsgModal').modal('show');  
+	  }
+	
     }
     
 }
@@ -261,16 +241,30 @@ function createSocket(address, name) {
         socket.send(JSON.stringify({'type': 'NULL'}));
         sentTimes.push(new Date());
     }
-    socket.onmessage = function(e) {
-      $('#submitbtn').attr('disabled',false);
-      console.log(e);
-      j = JSON.parse(e.data)
-      if (j.type == "NULL") {
-        receivedTimes.push(new Date());
-        numNulls++;
-        if (numNulls == defaultNumNulls) {
-            updateRTT();
-            sendState();
+    socket.onmessage = function(e) {		
+		$('#submitbtn').attr('disabled',false);
+        console.log(e);
+        j = JSON.parse(e.data)
+        if (j.type == "NULL") {
+            receivedTimes.push(new Date());
+            numNulls++;
+            if (numNulls == defaultNumNulls) {
+                updateRTT();
+                sendState();
+                sendFrameLoop();
+            } else {
+                socket.send(JSON.stringify({'type': 'NULL'}));
+                sentTimes.push(new Date());
+            }
+        } else if (j.type == "PROCESSED") {
+            tok++;
+			
+        }  else if(j.type == "STORED_PAGE2"){
+            uniqueId = j.id;
+            console.log(uniqueId);
+            console.log("Calling page3");
+            sessionStorage.setItem("uniqueId", uniqueId);
+             tok=1;
             sendFrameLoop();
         } else {
             socket.send(JSON.stringify({'type': 'NULL'}));
@@ -287,24 +281,25 @@ function createSocket(address, name) {
         sendFrameLoop();
         loaded();			
            // window.open("page3.html");
-       }  else if(j.type == "WARNING") {
-         $('#submitbtn').attr('disabled',true);
-         tok++;
-         numwarning++;
-         if(numwarning == 5){
-            numwarning=0;
-            toastr.warning(j.message);
-        }
-        if(numwarning == 10 && page3 == true){
-          timeout = timeout + 5000;
-      }
-      console.log(j.message)
-  }  else if(j.type == "END_FACE_COLLECTION"){
-    tok = -100;
-    var UsrName = j.name;
-    var mailID = j.mail;
-    socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
-} 
+        }  else if(j.type == "WARNING") {
+			$('#submitbtn').attr('disabled',true);
+            tok++;
+			numwarning++;
+			if(numwarning == 10){
+				numwarning=0;
+			  toastr.warning("Unable detect a single face");
+			}
+			if(numwarning == 10 && page3 == true && timeout<45){
+			   timeout = timeout + 5000;
+			  // timer.pause();
+			}
+            console.log(j.message)
+        }  else if(j.type == "END_FACE_COLLECTION"){
+            tok = -100;
+            var UsrName = j.name;
+            var mailID = j.mail;
+            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
+        } 
 //		else if(j.type == "PAGE3"){
            // sendFrameLoop();
         //}
@@ -508,5 +503,36 @@ function CloseMe()
            $('#mainContent').css('display','none');
            window.setTimeout(window.location.reload(), 20000);
            // console.log("Closing");
-           
-       }
+        }
+function closeModal(){
+       
+	   $('#pageMsgModal').modal('hide');
+      page3=true;
+	   var name = document.getElementById("name").value;
+       var email = document.getElementById("email").value;
+       var mobile = document.getElementById("number").value;
+       var company = document.getElementById("company").value;
+		   $('#userInfo').css('display','block');
+	       $('#overlay').css('display','block');
+	       $('#formContent').css('display','none');
+		   $('#countdownExample').css('display','block');
+		   var timer = new Timer();
+            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
+              $('#countdownExample .values').html(timer.getTimeValues().toString());
+              timer.addEventListener('secondsUpdated', function (e) {
+               $('#countdownExample .values').html(timer.getTimeValues().toString());
+              });
+            timer.addEventListener('targetAchieved', function (e) {
+            $('#countdownExample .values').html('NICE TO SEE YOU !!');
+              });
+          
+           var msg = {
+            'type': 'INFO',
+            'name': name,
+            'mail' : email,
+            'mobile' : mobile,
+            'company' : company
+             };
+       console.log("Submiting info");
+       socket.send(JSON.stringify(msg));
+}
