@@ -96,29 +96,7 @@ function submit_by_data(){
 			toastr.error('Invalid Mobile Number');
             return false;
 		}else{
-	       page3=true;
-	       $('#overlay').css('display','block');
-	       $('#formContent').css('display','none');
-		   $('#countdownExample').css('display','block');
-		    var timer = new Timer();
-            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
-              $('#countdownExample .values').html(timer.getTimeValues().toString());
-              timer.addEventListener('secondsUpdated', function (e) {
-               $('#countdownExample .values').html(timer.getTimeValues().toString());
-              });
-            timer.addEventListener('targetAchieved', function (e) {
-            $('#countdownExample .values').html('NICE TO SEE YOU !!');
-              });
-          
-           var msg = {
-            'type': 'INFO',
-            'name': name,
-            'mail' : email,
-            'mobile' : mobile,
-            'company' : company
-             };
-       console.log("Submiting info");
-       socket.send(JSON.stringify(msg));
+			$('#pageMsgModal').modal('show');  
 	  }
 	
     }
@@ -213,6 +191,7 @@ function createSocket(address, name) {
         sentTimes.push(new Date());
     }
     socket.onmessage = function(e) {
+		
 		$('#submitbtn').attr('disabled',false);
         console.log(e);
         j = JSON.parse(e.data)
@@ -229,6 +208,7 @@ function createSocket(address, name) {
             }
         } else if (j.type == "PROCESSED") {
             tok++;
+			
         }  else if(j.type == "STORED_PAGE2"){
             uniqueId = j.id;
             console.log(uniqueId);
@@ -242,12 +222,13 @@ function createSocket(address, name) {
 			$('#submitbtn').attr('disabled',true);
             tok++;
 			numwarning++;
-			if(numwarning == 5){
+			if(numwarning == 10){
 				numwarning=0;
-			  toastr.warning(j.message);
+			  toastr.warning("Unable detect face");
 			}
 			if(numwarning == 10 && page3 == true){
 			   timeout = timeout + 5000;
+			  // timer.pause();
 			}
             console.log(j.message)
         }  else if(j.type == "END_FACE_COLLECTION"){
@@ -461,3 +442,35 @@ function changeServerCallback() {
            // console.log("Closing");
 			
         }
+function closeModal(){
+       
+	   $('#pageMsgModal').modal('hide');
+      page3=true;
+	   var name = document.getElementById("name").value;
+       var email = document.getElementById("email").value;
+       var mobile = document.getElementById("number").value;
+       var company = document.getElementById("company").value;
+		   $('#userInfo').css('display','block');
+	       $('#overlay').css('display','block');
+	       $('#formContent').css('display','none');
+		   $('#countdownExample').css('display','block');
+		   var timer = new Timer();
+            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
+              $('#countdownExample .values').html(timer.getTimeValues().toString());
+              timer.addEventListener('secondsUpdated', function (e) {
+               $('#countdownExample .values').html(timer.getTimeValues().toString());
+              });
+            timer.addEventListener('targetAchieved', function (e) {
+            $('#countdownExample .values').html('NICE TO SEE YOU !!');
+              });
+          
+           var msg = {
+            'type': 'INFO',
+            'name': name,
+            'mail' : email,
+            'mobile' : mobile,
+            'company' : company
+             };
+       console.log("Submiting info");
+       socket.send(JSON.stringify(msg));
+}
