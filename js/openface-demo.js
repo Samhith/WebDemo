@@ -49,6 +49,7 @@ function registerHbarsHelpers() {
         return options.inverse(this);
     });
 }
+
 function sendFrameLoop() {
     if (socket == null || socket.readyState != socket.OPEN ||
         !vidReady || numNulls != defaultNumNulls) {
@@ -228,7 +229,7 @@ function createSocket(address, name) {
         tok = defaultTok;
         numNulls = 0
         numwarning =0;
-        socket.send(JSON.stringify({'type': 'NULL'}));
+        socket.send(JSON.stringify({'type': 'NULL'}))
         sentTimes.push(new Date());
     }
     socket.onmessage = function(e) {
@@ -249,33 +250,6 @@ function createSocket(address, name) {
                 }
         } else if (j.type == "PROCESSED") {
             tok++;
-        }  else if (j.type == "IDENTITIES") {
-            console.log("Name is "+j.name)
-            console.log("Mail is "+j.mail)
-            console.log("Comapny is "+j.company)
-                /*var h = "Last updated: " + (new Date()).toTimeString();
-                h += "<ul>";
-                var len = j.identities.length
-                if (len > 0) {
-                    for (var i = 0; i < len; i++) {
-                        var identity = "Unknown";
-                        var idIdx = j.identities[i];
-                        if (idIdx != -1) {
-                            identity = people[idIdx];
-                        }
-                        h += "<li>" + identity + "</li>";
-                    }
-                } else {
-                    h += "<li>Nobody detected.</li>";
-                }
-                h += "</ul>"
-                $("#peopleInVideo").html(h);
-                */
-        } else if (j.type == "ANNOTATED") {
-            console.log("Came to Annotated")
-            $("#detectedFaces").html(
-                "<img src='" + j['content'] + "' width='430px'></img>"
-                )
         } else if(j.type == "STORED_PAGE2"){
             uniqueId = j.id;
             console.log(uniqueId);
@@ -286,22 +260,23 @@ function createSocket(address, name) {
             loaded();	
            // window.open("page3.html");
        }  else if(j.type == "WARNING") {
-         $('#submitbtn').attr('disabled',true);
-         tok++;
-         numwarning++;
-         if(numwarning == 5){
-            numwarning=0;
-            toastr.warning(j.message);
-        }
-        if(numwarning == 10 && page3 == true){
-          timeout = timeout + 5000;
-      }
-      console.log(j.message)
-      }  else if(j.type == "END_FACE_COLLECTION"){
-        tok = -100;
-        var UsrName = j.name;
-        var mailID = j.mail;
-        socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
+            $('#submitbtn').attr('disabled',true);
+            tok++;
+            numwarning++;
+            if(numwarning == 10){
+                numwarning=0;
+              toastr.warning("Unable detect a single face");
+            }
+            if(numwarning == 10 && page3 == true && timeout<45){
+               timeout = timeout + 5000;
+              // timer.pause();
+            }
+            console.log(j.message)
+        }  else if(j.type == "END_FACE_COLLECTION"){
+            tok = -100;
+            var UsrName = j.name;
+            var mailID = j.mail;
+            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}));
 
       }  else if (j.type == "NEW_IMAGE") {
             images.push({
@@ -312,9 +287,9 @@ function createSocket(address, name) {
             });
             redrawPeople();
         } else if (j.type == "IDENTITIES") {
-            onsole.log("Name is "+j.name)
-            console.log("Mail is "+j.mail)
-            console.log("Comapny is "+j.company)
+            onsole.log("Name is "+j.name);
+            console.log("Mail is "+j.mail);
+            console.log("Comapny is "+j.company);
             /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
@@ -361,8 +336,7 @@ function umSuccess(stream) {
     if (vid.mozCaptureStream) {
         vid.mozSrcObject = stream;
     } else {
-        vid.src = (window.URL && window.URL.createObjectURL(stream)) ||
-        stream;
+        vid.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
     }
     vid.play();
     vidReady = true;
@@ -507,5 +481,36 @@ function CloseMe()
            $('#mainContent').css('display','none');
            window.setTimeout(window.location.reload(), 20000);
            // console.log("Closing");
-           
-       }
+        }
+function closeModal(){
+       
+       $('#pageMsgModal').modal('hide');
+      page3=true;
+       var name = document.getElementById("name").value;
+       var email = document.getElementById("email").value;
+       var mobile = document.getElementById("number").value;
+       var company = document.getElementById("company").value;
+           $('#userInfo').css('display','block');
+           $('#overlay').css('display','block');
+           $('#formContent').css('display','none');
+           $('#countdownExample').css('display','block');
+           var timer = new Timer();
+            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
+              $('#countdownExample .values').html(timer.getTimeValues().toString());
+              timer.addEventListener('secondsUpdated', function (e) {
+               $('#countdownExample .values').html(timer.getTimeValues().toString());
+              });
+            timer.addEventListener('targetAchieved', function (e) {
+            $('#countdownExample .values').html('NICE TO SEE YOU !!');
+              });
+          
+           var msg = {
+            'type': 'INFO',
+            'name': name,
+            'mail' : email,
+            'mobile' : mobile,
+            'company' : company
+             };
+       console.log("Submiting info");
+       socket.send(JSON.stringify(msg));
+}
