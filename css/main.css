@@ -111,8 +111,12 @@ ul.tabs li.current{
 #mainHeading{
 	color:#337ab7;
 	margin-left:75px;
+	font-family:cursive;
 	}
-	
+	.modal-title{
+		font-family: cursive;
+    font-weight: bolder;
+	}
 	.card{
 		padding-top:10px;
 		padding-bottom:10px;
@@ -127,3 +131,11 @@ ul.tabs li.current{
     padding-left: 1.55em;
 	}
 
+	.marginLeft{
+		padding:10px;
+	}
+#countdownExample{
+	font-family:cursive;
+	font-weight:bolder;
+	font-size:30px;
+	}

@@ -5,36 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Face Recognition</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+	<link href="vendor/css/bootstrap.css" rel="stylesheet">
     <link href="vendor/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link href="vendor/css/bootstrap-dialog.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container-fluid">
-       <!-- <div class="content">
-            <h2>Register yourself</h2>
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button" onclick="openRegistration()" 
-                    id="Registerbtn">
-                    Register
-                </button>
-            </span>                    
-        </div>-->
-
-<div class="modal" tabindex="-1" role="dialog"id="RegisterModal" onclick="openRegistration()">
-  <div class="modal-dialog" role="document">
+<div class="container-fluid">
+<div class="modal" tabindex="-1" role="dialog"id="RegisterModal" onclick="openRegistration()" style="background-color:white;">
+  <div class="modal-dialog" role="document" style="margin-top:100px;">
     <div class="modal-content">
       <div class="modal-header">
-       
-       <button class="mainBtn btn btn-primary modal-title"onclick="openRegistration()">Make me your Friend</button>
+         <img class="mainImg" src='./models/img/mainimage.gif' />
+	   </div>
+	   <div class="modal-footer">
+       <button class="mainBtn btn btn-primary modal-title"onclick="openRegistration()">Make me your Friend<span class="glyphicon glyphicon-camera marginLeft" style="color:white;"></span></button>
        <!-- <button type="button" id="Registerbtn" class="btn btn-primary"  > </button>-->
-       
-      </div>
-     
-     
+       </div>
+      </div>     
     </div>
   </div>
 </div>
@@ -42,6 +32,7 @@
  <div class="row">
   <div class="col-sm-4"></div>
   <div class="card col-sm-4">
+
                 <div id='tab-preview' class='tab-content'>
 				   <div class="overlay" id="overlay" style="display:none;" width="400" height="300"></div>
                     <video id="videoel" width="400" height="300"
@@ -50,29 +41,34 @@
    <!--</div>
     <div class="content">-->
 	<div id="formContent">
-        <h2 id="mainHeading">Introduce yourself</h2>
+        <h2 id="mainHeading">Introduce yourself <span class="marginLeft glyphicon glyphicon-facetime-video"></span></h2>
 		
         <form name="form_name" id="form_id" >
 		   <div class="form-group">
-             <label>Hey, you call me :</label>
+             <label>Hey, you call me :<span class="glyphicon glyphicon-user marginLeft"></span></label>
              <input  class="form-control" type="text" name="name" id="name" placeholder="Name" />
 		   </div>
 		   <div class="form-group">
-              <label>Send me mails to :</label>
+              <label>Send me mails to :<span class="glyphicon glyphicon-envelope marginLeft"></span></label>
               <input class="form-control" type="email" name="email" id="email" placeholder="Valid Email" />
 			</div>
 			<div class="form-group">
-              <label>You can call me at :</label>
-              <input class="form-control" type="number" name="number" id="number" placeholder="Valid mobile number" />
+              <label>You can call me at :<span class="glyphicon glyphicon-phone marginLeft"></span></label>
+              <input class="form-control" type="tel" name="number" id="number" placeholder="Valid mobile number" />
 			</div>
 			<div class="form-group">
-              <label>I work at :</label>
+              <label>I work at :<span class="glyphicon glyphicon-briefcase marginLeft"></span></label>
               <input class="form-control" type="text" name="company" id="company" placeholder="Organization" />
 			</div>
-            <input style="width:414px" type="button" class="btn btn-primary" value="Submit" id="submitbtn" name="submit_id" onclick="submit_by_data()"/>
+            <input style="width:420px;font-weight:bolder;" type="button" class="btn btn-primary" value="SUBMIT" id="submitbtn" name="submit_id" onclick="submit_by_data()"/>
         </form> 
-     </div>		
+     </div>	
+     <div id="countdownExample"style="display:none;">
+          <div class="values"></div>
+      </div>
+         	 
     </div>
+	 
 	</div>
   </div>
   <div id="successMsg"style="display:none;">
@@ -93,6 +89,7 @@
 <script src="js/utils.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="js/openface-demo.js"></script>
+<script src="vendor/js/easytimer.min.js"></script>
 <script type="text/javascript">
 
 $('#RegisterModal').modal('show');
@@ -148,6 +145,10 @@ height:300px !important;
 	background-position: 60px 4px !important;
 	background:url('./models/img/smiley.gif') no-repeat;
     opacity: 0.5;
+}
+.mainImg{
+  width: 400px;
+    margin-left: 45px;
 }
 </style>
 </html>

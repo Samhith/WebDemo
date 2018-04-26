@@ -87,14 +87,29 @@ function submit_by_data(){
 	}else{
 	 
      var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+	 var mobilereg = /^[2-9]{2}[0-9]{8}$/;
        if (reg.test(email) == false) 
         {
             toastr.error('Invalid Email Address');
             return false;
-        }else{
+        }else if(mobilereg.test(mobile) == false){
+			toastr.error('Invalid Mobile Number');
+            return false;
+		}else{
 	       page3=true;
 	       $('#overlay').css('display','block');
 	       $('#formContent').css('display','none');
+		   $('#countdownExample').css('display','block');
+		    var timer = new Timer();
+            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
+              $('#countdownExample .values').html(timer.getTimeValues().toString());
+              timer.addEventListener('secondsUpdated', function (e) {
+               $('#countdownExample .values').html(timer.getTimeValues().toString());
+              });
+            timer.addEventListener('targetAchieved', function (e) {
+            $('#countdownExample .values').html('NICE TO SEE YOU !!');
+              });
+          
            var msg = {
             'type': 'INFO',
             'name': name,
@@ -231,7 +246,7 @@ function createSocket(address, name) {
 				numwarning=0;
 			  toastr.warning(j.message);
 			}
-			if(page3 == true){
+			if(numwarning == 10 && page3 == true){
 			   timeout = timeout + 5000;
 			}
             console.log(j.message)
