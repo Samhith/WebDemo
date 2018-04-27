@@ -116,6 +116,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.mobileNo = ""
         self.org = ""
         self.details = None
+        self.prediction = -1
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
@@ -170,6 +171,10 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.storefaces()
             print(self.uniqueID)
             self.sendMessage('{"type": "STORED_PAGE2", "id": ' + self.uniqueID + '}')
+
+         elif msg['type'] == "FEEDBACK":
+            print("Taking feedback")
+            self.processFeedback(msg['value'], msg['actualID'])
 
         elif msg['type'] == "NULL":
             tok = 1
@@ -230,7 +235,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             #shutil.move(self.dirname, userFolder)
             os.rmdir(self.dirname)
             print("Creation, moving and deletion done")
-        
+
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
         print("Called Close connection")
@@ -508,6 +513,19 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         #     plt.close()
         #     self.sendMessage(json.dumps(msg))
 
+    def processFeedback(self,value, actualMail):
+        predictedMail = self.details[self.details['ID'] == self.prediction]['Mail'].values[0]
+        if value == True:
+            d = {'Result': [value], 'ActualMail':[actualMail], 'PredcitedMail':[actualMail]}
+        else:
+            d = {'Result': [value], 'ActualMail':[actualMail], 'PredcitedMail':[predictedMail]}
+
+        data = pd.DataFrame(data = d)
+        with open('results.csv', 'a') as f:
+            data.to_csv(f, header = False)
+
+        print("feedback taken")
+
     def processFrame_testing(self, dataURL):
         
         head = "data:image/jpeg;base64,"
@@ -613,7 +631,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                         identity = -1
                     #if identity not in identities:
                     #    identities.append(identity)
-
+                self.prediction = identity
             #if not self.training:
             if self.testing:
                 bl = (bb.left(), bb.bottom())
