@@ -18,6 +18,7 @@ import os
 import sys
 import shutil
 import time
+import pickle
 import datetime
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
@@ -82,6 +83,7 @@ args = parser.parse_args()
 align = openface.AlignDlib(args.dlibFacePredictor)
 net = openface.TorchNeuralNet(args.networkModel, imgDim=args.imgDim,
                               cuda=args.cuda)
+model_location = 'model.sav'
 
 
 class Face:
@@ -113,6 +115,9 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.uniqueID = ""
         self.mobileNo = ""
         self.org = ""
+        self.details = None
+        self.prediction = -1
+        
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
 
@@ -138,6 +143,10 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.training = msg['val']
             if not self.training:
                 self.trainSVM()
+        elif msg['type'] == "TRAINALLIMAGES":
+            print("Calling training all images")
+            self.TrainAllImages()
+
 
         elif msg['type'] == "INFO":
             print("Name of the person is : ")
@@ -154,7 +163,8 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         elif msg['type'] == "TESTING":
             print("Trying to detect face")
             self.testing = True
-            processFrame_testing(self, dataURL)
+            processFrame_testing(self, msg['dataURL'])
+            self.sendMessage('{"type": "PROCESSED" }')
             #Load SVM
             #self.svm = loaded SVM
 
@@ -163,6 +173,10 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.storefaces()
             print(self.uniqueID)
             self.sendMessage('{"type": "STORED_PAGE2", "id": ' + self.uniqueID + '}')
+        elif msg['type'] == "FEEDBACK":
+            print("Taking feedback")
+            self.processFeedback(msg['value'], msg['actualID'])
+
 
         elif msg['type'] == "NULL":
             tok = 1
@@ -327,6 +341,30 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                  'kernel': ['rbf']}
             ]
             self.svm = GridSearchCV(SVC(C=1), param_grid, cv=5).fit(X, y)
+            pickle.dump(self.svm, open(model_location, 'wb'))
+            print("Saved in the SVM to model.sav file")
+
+
+    def TrainAllImages(self):
+        # Loading Data into self.images
+        os.chdir('./training_images')
+        for fname in os.listdir("."):
+            if os.path.isdir(fname):
+                print("Reading images in ", fname)
+                self.people.append(int(fname))
+                for i in os.listdir(fname):
+                    alignedFace = cv2.imread(os.path.join(fname,i))
+                    try:
+                        img = net.forward(alignedFace)
+                    except AssertionError:
+                        continue
+                    #print(len(img))
+                    rep = Face(np.array(img), int(fname))
+                    #print(rep)
+                    phash = str(imagehash.phash(Image.fromarray(alignedFace)))
+                    self.images[phash] = rep
+        os.chdir('..')
+        self.trainSVM()
 
     def processFrame(self, dataURL, identity, id):
         
@@ -479,7 +517,20 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         #     plt.close()
         #     self.sendMessage(json.dumps(msg))
 
-def processFrame_testing(self, dataURL):
+def processFeedback(self,value, actualMail):
+        predictedMail = self.details[self.details['ID'] == self.prediction]['Mail'].values[0]
+        if value == True:
+            d = {'Result': [value], 'ActualMail':[actualMail], 'PredictedMail':[actualMail]}
+        else:
+            d = {'Result': [value], 'ActualMail':[actualMail], 'PredictedMail':[predictedMail]}
+
+        data = pd.DataFrame(data = d)
+        with open('results.csv', 'a') as f:
+            data.to_csv(f, header = False)
+
+        print("feedback taken")
+
+def processFrame_testing_waste(self, dataURL):
         
         head = "data:image/jpeg;base64,"
         assert(dataURL.startswith(head))
@@ -622,6 +673,164 @@ def processFrame_testing(self, dataURL):
             }
             plt.close()
             self.sendMessage(json.dumps(msg))
+def processFrame_testing(self, dataURL):
+        
+        head = "data:image/jpeg;base64,"
+        assert(dataURL.startswith(head))
+        imgdata = base64.b64decode(dataURL[len(head):])
+        imgF = StringIO.StringIO()
+        imgF.write(imgdata)
+        imgF.seek(0)
+        img = Image.open(imgF)
+
+        buf = np.fliplr(np.asarray(img))
+        rgbFrame = np.zeros((300, 400, 3), dtype=np.uint8)
+        rgbFrame[:, :, 0] = buf[:, :, 2]
+        rgbFrame[:, :, 1] = buf[:, :, 1]
+        rgbFrame[:, :, 2] = buf[:, :, 0]
+
+        if self.testing:
+            annotatedFrame = np.copy(buf)
+
+        # cv2.imshow('frame', rgbFrame)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     return
+
+        ####### loading SVM (Load svm)
+        if self.svm is None:
+            print("Loading SVM model file")
+            self.svm = pickle.load(open(model_location, 'rb'))
+            print(self.svm)
+
+        #Opening CSV
+        if self.details is None:
+            self.details = pd.read_csv('User_Details.csv')
+
+        #identities = []
+        identity = -1
+        # bbs = align.getAllFaceBoundingBoxes(rgbFrame)
+
+        assert rgbFrame is not None
+        bbs = align.getAllFaceBoundingBoxes(rgbFrame)
+        print(len(bbs))
+        if len(bbs) > 1:
+            print("More than one person in front of cam")
+            msg = {
+                 "type": "WARNING",
+                 "message": "Please make ensure only one person is infront of the cam"
+             }
+            self.sendMessage(json.dumps(msg))
+            return
+
+        if len(bbs) == 0:
+            print("No human face detected")
+            msg = {
+                 "type": "WARNING",
+                 "message": "No face found, please be present in front of the camera, alone!!"
+             }
+            self.sendMessage(json.dumps(msg))
+            return
+        
+        ##------------------End of Handling no face or more than one face ----------------------------------
+
+        bb = align.getLargestFaceBoundingBox(rgbFrame)
+        bbs = [bb] if bb is not None else []
+        for bb in bbs:
+            # print(len(bbs))
+            landmarks = align.findLandmarks(rgbFrame, bb)
+            alignedFace = align.align(args.imgDim, rgbFrame, bb,
+                                      landmarks=landmarks,
+                                      landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+            if alignedFace is None:
+                continue
+
+            phash = str(imagehash.phash(Image.fromarray(alignedFace)))
+            if phash in self.images:
+                identity = self.images[phash].identity
+            else:
+                rep = net.forward(alignedFace)
+                #print(rep)
+                #if self.training:
+                #    self.images[phash] = Face(rep, identity)
+                #    # TODO: Transferring as a string is suboptimal.
+                #    content = [str(x) for x in cv2.resize(alignedFace, (0,0),
+                #    fx=0.5, fy=0.5).flatten()]
+                #    content = [str(x) for x in alignedFace.flatten()]
+                #    msg = {
+                #        "type": "NEW_IMAGE",
+                #        "hash": phash,
+                #        "content": content,
+                #        "identity": identity,
+                #        "representation": rep.tolist()
+                #    }
+                #    self.sendMessage(json.dumps(msg))
+                #else
+                if self.testing:
+                    #if len(self.people) == 0:
+                    #    identity = -1
+                    #elif len(self.people) == 1:
+                    #    identity = 0
+                    if self.svm:
+                        print("Came here")
+                        identity = self.svm.predict(rep.tolist())[0]
+                    else:
+                        print("hhh")
+                        identity = -1
+                    #if identity not in identities:
+                    #    identities.append(identity)
+                self.prediction = identity
+            #if not self.training:
+            if self.testing:
+                bl = (bb.left(), bb.bottom())
+                tr = (bb.right(), bb.top())
+                cv2.rectangle(annotatedFrame, bl, tr, color=(153, 255, 204),
+                              thickness=3)
+                for p in openface.AlignDlib.OUTER_EYES_AND_NOSE:
+                    cv2.circle(annotatedFrame, center=landmarks[p], radius=3,
+                               color=(102, 204, 255), thickness=-1)
+                if identity == -1:
+                    if len(self.people) == 1:
+                        name = self.people[0]
+                    else:
+                        name = "Unknown"
+                else:
+                    #name = self.people[identity]
+                    details = self.details[self.details['ID']==identity]
+                    #print(details)
+                    name  = details['Name'].values[0]
+                    print(name)
+                cv2.putText(annotatedFrame, name, (bb.left(), bb.top() - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.75,
+                            color=(152, 255, 204), thickness=2)
+
+        # if not self.training:
+        if identity!=-1 and self.testing:
+            msg = {
+                "type": "IDENTITIES",
+                "identities": identity,
+                "name": details['Name'].values[0],
+                "mail": details['Mail'].values[0],
+                "company": details['Company'].values[0]
+            }
+            self.sendMessage(json.dumps(msg))
+
+            plt.figure()
+            plt.imshow(annotatedFrame)
+            plt.xticks([])
+            plt.yticks([])
+
+            imgdata = StringIO.StringIO()
+            plt.savefig(imgdata, format='png')
+            imgdata.seek(0)
+            content = 'data:image/png;base64,' + \
+                urllib.quote(base64.b64encode(imgdata.buf))
+            msg = {
+                "type": "ANNOTATED",
+                "content": content
+            }
+            plt.close()
+            self.sendMessage(json.dumps(msg))
+
 
 def main(reactor):
     log.startLogging(sys.stdout)

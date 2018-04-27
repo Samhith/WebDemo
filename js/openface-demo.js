@@ -95,6 +95,25 @@ function startTrainingAll(){
     socket.send(JSON.stringify(msg));
 }
 
+function submit_true_feedback(){
+    var msg = {
+        'type': 'FEEDBACK',
+        'value' : true,
+        'actualID' : predictMail
+    };
+    socket.send(JSON.stringify(msg));
+}
+
+function submit_false_feedback(){
+    var actualMail = document.getElementById("actualMailID").value;
+    var msg = {
+        'type': 'FEEDBACK',
+        'value' : false,
+        'actualID' : actualMail
+    };
+    socket.send(JSON.stringify(msg));
+}
+
 
         function submit_by_data(){
             var name = document.getElementById("name").value;
@@ -269,9 +288,10 @@ function createSocket(address, name) {
             });
             redrawPeople();
         } else if (j.type == "IDENTITIES") {
-            console.log("Name is "+j.name)
-            console.log("Mail is "+j.mail)
-            console.log("Comapny is "+j.company)
+            console.log("Name is "+j.name);
+            console.log("Mail is "+j.mail);
+            predictMail = j.mail;
+            console.log("Comapny is "+j.company);
             /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
