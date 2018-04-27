@@ -37,7 +37,7 @@ and reload the app.
 
 EOF
 
-WEBSOCKET_LOG='/tmp/openface.websocket.log'
+WEBSOCKET_LOG='./Logs'
 printf "WebSocket Server: Logging to '%s'\n\n" $WEBSOCKET_LOG
 
 python2 simpleSSLServer.py $HTTP_PORT &> /dev/null &
