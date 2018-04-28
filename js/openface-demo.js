@@ -104,6 +104,8 @@ function submit_true_feedback(){
     };
     socket.send(JSON.stringify(msg));
 	$('#AttendenceMsg').css('display','block');
+    window.setTimeout(window.location.reload(), 8000);
+
 }
 
 function submit_false_feedback(){
