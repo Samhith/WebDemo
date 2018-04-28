@@ -13,39 +13,45 @@
     <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container-fluid">
-       <!-- <div class="content">
-            <h2>Register yourself</h2>
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button" onclick="openRegistration()" 
-                    id="Registerbtn">
-                    Register
-                </button>
-            </span>                    
-        </div>-->
 
-<div class="modal" tabindex="-1" role="dialog"id="TestModal" onclick="startTesting()">
-  <div class="modal-dialog" role="document">
+<div class="modal" tabindex="-1" role="dialog"id="TestModal" onclick="startTesting()" style="background-color:white;">
+  <div class="modal-dialog" role="document" style="margin-top:100px;">
     <div class="modal-content">
       <div class="modal-header">
-       
-       <button class="mainBtn btn btn-primary modal-title"onclick="startTesting()">Find my Identity</button>
-       
-       <!-- <button type="button" id="Registerbtn" class="btn btn-primary"  > </button>-->
-       
+       <img class="mainImg" src='./models/img/loader-ai-siri_2x.gif' />
       </div>
-     
+	   <div class="modal-footer">
+            <button class="mainBtn btn btn-primary modal-title"onclick="startTesting()">Find my Identity<span class="padLeft glyphicon glyphicon-search"></span></button>
+       </div>  
     </div>
   </div>
 </div>
-
-
+  <div class="modal" id="emailModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title marginLeft">EMAIL<span style="color:#337ab7;" class="glyphicon glyphicon-info-sign marginLeft"></span></h5>
+      </div>
+      <div class="modal-body modalText">
+       <form name="form_name" id="form_id" >
+		   <div class="form-group">
+              <label>Send me mails to :<span class="glyphicon glyphicon-envelope marginLeft"></span></label>
+              <input class="form-control" type="email" name="email" id="actualMailID" placeholder="Valid Email" />
+			</div>
+	   </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="center btn btn-primary" onclick="submit_false_feedback()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="mainContent" style="display:none;">
  <div class="row">
   <div class="col-sm-4"></div>
   <div class="card col-sm-4">
 
-    <div class="header">
+    <div class="header" >
                 <ul class='tabs'>
                     <li class='tab-link' data-tab='tab-preview'
                         id='tab-preview-button'>
@@ -64,11 +70,42 @@
                     <div id="detectedFaces"></div>
                 </div>
     </div>
+	<div id="formContentView" style="display:none;">
+        <h2 id="mainHeading">Confirm your Details<span class="marginLeft glyphicon glyphicon-facetime-video"></span></h2>
+	
+        <form name="form_name" id="form_id" >
+		   <div class="form-group">
+             <label>Hey, I can call you :<span class="glyphicon glyphicon-user marginLeft"></span></label>
+             <input  class="form-control" type="text" name="name" id="name" placeholder="Name" readonly />
+		   </div>
+		   <div class="form-group">
+              <label>Send you mails to :<span class="glyphicon glyphicon-envelope marginLeft"></span></label>
+              <input class="form-control" type="email" name="email" id="email" placeholder="Valid Email" readonly />
+			</div>
+			<!--<div class="form-group">
+              <label>I can call you at :<span class="glyphicon glyphicon-phone marginLeft"></span></label>
+              <input class="form-control" type="tel" name="number" id="number" placeholder="Valid mobile number" readonly />
+			</div>-->
+			<div class="form-group">
+              <label>You work at :<span class="glyphicon glyphicon-briefcase marginLeft"></span></label>
+              <input class="form-control" type="text" name="company" id="company" placeholder="Organization" readonly />
+			</div>
+			<input style="font-weight:bolder;" type="button" class="btn btn-primary" value="YES" id="okbtn" name="ok_id" onclick="submit_true_feedback()"/>
+            <input style="font-weight:bolder;" type="button" class="btn btn-primary" value="NO" id="nobtn" name="no_id" onclick="mailForm()"/>
+        </form> 
+     </div>	
 
     </div>
 	</div>
   </div>
-  
+   <div id="AttendenceMsg"style="display:none;">
+     <div class="row">
+         <div class="col-sm-4"></div>
+         <div class="card successCard col-sm-4">
+                   <h2 class="center success-header">Thanks for your attendence!!!</h2>
+         </div>
+     </div>
+  </div>
 </body>
 <script src="vendor/js/jquery.min.js"></script>
 <script src="vendor/js/bootstrap.min.js"></script>
@@ -129,5 +166,9 @@ var test = 1;
    //$("#Registerbtn").click(RegisterbtnOnClick);
  //  createSocket("wss://" + window.location.hostname + ":9000", "Local");
 </script>
-
+<style>
+.mainImg{
+  width: 498px !important;
+}
+</style>
 </html>

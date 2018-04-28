@@ -96,15 +96,18 @@ function startTrainingAll(){
 }
 
 function submit_true_feedback(){
+	$('#mainContent').css('display','none');
     var msg = {
         'type': 'FEEDBACK',
         'value' : true,
         'actualID' : predictMail
     };
     socket.send(JSON.stringify(msg));
+	$('#AttendenceMsg').css('display','block');
 }
 
 function submit_false_feedback(){
+	$('#emailModal').modal('hide');
     var actualMail = document.getElementById("actualMailID").value;
     var msg = {
         'type': 'FEEDBACK',
@@ -112,6 +115,8 @@ function submit_false_feedback(){
         'actualID' : actualMail
     };
     socket.send(JSON.stringify(msg));
+	$('#AttendenceMsg').css('display','block');
+	 window.setTimeout(window.location.reload(), 8000);
 }
 
 
@@ -292,6 +297,10 @@ function createSocket(address, name) {
             console.log("Mail is "+j.mail);
             predictMail = j.mail;
             console.log("Comapny is "+j.company);
+			$('#name').val(j.name);
+			$('#email').val(j.mail);
+			$('#company').val(j.company);
+			$('#formContentView').css('display','block');
             /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
@@ -518,4 +527,10 @@ function closeModal(){
              };
        console.log("Submiting info");
        socket.send(JSON.stringify(msg));
+}
+
+function mailForm(){
+$('#mainContent').css('display','none');
+ $('#emailModal').modal('show');
+
 }

@@ -1,0 +1,140 @@
+2018-04-28 07:16:05+0000 [-] Log opened.
+2018-04-28 07:16:05+0000 [-] WebSocketServerFactory (TLS) starting on 9000
+2018-04-28 07:16:05+0000 [-] Starting factory <autobahn.twisted.websocket.WebSocketServerFactory object at 0x7f34d7b285d0>
+2018-04-28 07:16:35+0000 [-] WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+2018-04-28 07:16:35+0000 [-] Called Close connection
+2018-04-28 07:16:36+0000 [-] WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+2018-04-28 07:16:36+0000 [-] Called Close connection
+2018-04-28 07:16:38+0000 [-] Client connecting: tcp4:27.59.235.197:4057
+2018-04-28 07:16:38+0000 [-] WebSocket connection open.
+2018-04-28 07:16:40+0000 [-] Client connecting: tcp4:27.59.235.197:4058
+2018-04-28 07:16:40+0000 [-] WebSocket connection open.
+2018-04-28 07:16:40+0000 [-] Received paylod number : 1
+2018-04-28 07:16:40+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:41+0000 [-] Received paylod number : 2
+2018-04-28 07:16:41+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:41+0000 [-] Received paylod number : 3
+2018-04-28 07:16:41+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:42+0000 [-] Received paylod number : 4
+2018-04-28 07:16:42+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:43+0000 [-] Received paylod number : 5
+2018-04-28 07:16:43+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:43+0000 [-] Received paylod number : 6
+2018-04-28 07:16:43+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:44+0000 [-] Received paylod number : 7
+2018-04-28 07:16:44+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:44+0000 [-] Received paylod number : 8
+2018-04-28 07:16:44+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:45+0000 [-] Received paylod number : 9
+2018-04-28 07:16:45+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:45+0000 [-] Received paylod number : 10
+2018-04-28 07:16:45+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:46+0000 [-] Received paylod number : 11
+2018-04-28 07:16:46+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:46+0000 [-] Received paylod number : 12
+2018-04-28 07:16:46+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:47+0000 [-] Received paylod number : 13
+2018-04-28 07:16:47+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:47+0000 [-] Received paylod number : 14
+2018-04-28 07:16:47+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:48+0000 [-] Received paylod number : 15
+2018-04-28 07:16:48+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:48+0000 [-] Received paylod number : 16
+2018-04-28 07:16:48+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:48+0000 [-] Received paylod number : 17
+2018-04-28 07:16:48+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:49+0000 [-] Received paylod number : 18
+2018-04-28 07:16:49+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:49+0000 [-] Received paylod number : 19
+2018-04-28 07:16:49+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:50+0000 [-] Received paylod number : 20
+2018-04-28 07:16:50+0000 [-] Received NULL message of length 15.
+2018-04-28 07:16:50+0000 [-] Received paylod number : 21
+2018-04-28 07:16:50+0000 [-] Received ALL_STATE message of length 61.
+2018-04-28 07:16:50+0000 [-] Warning: Unknown message type: ALL_STATE
+2018-04-28 07:16:50+0000 [-] Received paylod number : 22
+2018-04-28 07:16:50+0000 [-] Received TESTING message of length 11435.
+2018-04-28 07:16:50+0000 [-] Trying to detect face
+2018-04-28 07:16:51+0000 [-] Loading SVM model file
+2018-04-28 07:16:51+0000 [-] GridSearchCV(cv=5, error_score='raise',
+2018-04-28 07:16:51+0000 [-]        estimator=SVC(C=1, cache_size=200, class_weight=None, coef0=0.0,
+2018-04-28 07:16:51+0000 [-]   decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
+2018-04-28 07:16:51+0000 [-]   max_iter=-1, probability=False, random_state=None, shrinking=True,
+2018-04-28 07:16:51+0000 [-]   tol=0.001, verbose=False),
+2018-04-28 07:16:51+0000 [-]        fit_params={}, iid=True, n_jobs=1,
+2018-04-28 07:16:51+0000 [-]        param_grid=[{'kernel': ['linear'], 'C': [1, 10, 100, 1000]}, {'kernel': ['rbf'], 'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001]}],
+2018-04-28 07:16:51+0000 [-]        pre_dispatch='2*n_jobs', refit=True, scoring=None, verbose=0)
+2018-04-28 07:16:51+0000 [-] 1
+2018-04-28 07:16:51+0000 [-] Came here
+2018-04-28 07:16:51+0000 [-] /home/ubuntu/.local/lib/python2.7/site-packages/sklearn/utils/validation.py:386: exceptions.DeprecationWarning: Passing 1d arrays as data is deprecated in 0.17 and willraise ValueError in 0.19. Reshape your data either using X.reshape(-1, 1) if your data has a single feature or X.reshape(1, -1) if it contains a single sample.
+2018-04-28 07:16:51+0000 [-] Samhith
+2018-04-28 07:16:56+0000 [-] Received paylod number : 23
+2018-04-28 07:16:56+0000 [-] Received TESTING message of length 10343.
+2018-04-28 07:16:56+0000 [-] Trying to detect face
+2018-04-28 07:16:56+0000 [-] 1
+2018-04-28 07:16:57+0000 [-] Came here
+2018-04-28 07:16:57+0000 [-] /home/ubuntu/.local/lib/python2.7/site-packages/sklearn/utils/validation.py:386: exceptions.DeprecationWarning: Passing 1d arrays as data is deprecated in 0.17 and willraise ValueError in 0.19. Reshape your data either using X.reshape(-1, 1) if your data has a single feature or X.reshape(1, -1) if it contains a single sample.
+2018-04-28 07:16:57+0000 [-] Samhith
+2018-04-28 07:16:59+0000 [-] Received paylod number : 24
+2018-04-28 07:16:59+0000 [-] Received TESTING message of length 11351.
+2018-04-28 07:16:59+0000 [-] Trying to detect face
+2018-04-28 07:17:00+0000 [-] 1
+2018-04-28 07:17:00+0000 [-] Came here
+2018-04-28 07:17:00+0000 [-] /home/ubuntu/.local/lib/python2.7/site-packages/sklearn/utils/validation.py:386: exceptions.DeprecationWarning: Passing 1d arrays as data is deprecated in 0.17 and willraise ValueError in 0.19. Reshape your data either using X.reshape(-1, 1) if your data has a single feature or X.reshape(1, -1) if it contains a single sample.
+2018-04-28 07:17:00+0000 [-] Samhith
+2018-04-28 07:17:05+0000 [-] Received paylod number : 25
+2018-04-28 07:17:05+0000 [-] Received FEEDBACK message of length 63.
+2018-04-28 07:17:05+0000 [-] Taking feedback
+2018-04-28 07:17:05+0000 [OpenFaceServerProtocol (TLSMemoryBIOProtocol),3,27.59.235.197] Unhandled Error
+	Traceback (most recent call last):
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/python/log.py", line 101, in callWithLogger
+	    return callWithContext({"system": lp}, func, *args, **kw)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/python/log.py", line 84, in callWithContext
+	    return context.call({ILogContext: newCtx}, func, *args, **kw)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/python/context.py", line 118, in callWithContext
+	    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/python/context.py", line 81, in callWithContext
+	    return func(*args,**kw)
+	--- <exception caught here> ---
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/internet/posixbase.py", line 611, in _doReadOrWrite
+	    why = selectable.doRead()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/internet/tcp.py", line 209, in doRead
+	    return self._dataReceived(data)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/internet/tcp.py", line 215, in _dataReceived
+	    rval = self.protocol.dataReceived(data)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/protocols/tls.py", line 422, in dataReceived
+	    self._flushReceiveBIO()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/protocols/tls.py", line 392, in _flushReceiveBIO
+	    ProtocolWrapper.dataReceived(self, bytes)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/twisted/protocols/policies.py", line 120, in dataReceived
+	    self.wrappedProtocol.dataReceived(data)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/twisted/websocket.py", line 101, in dataReceived
+	    self._dataReceived(data)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/websocket/protocol.py", line 1299, in _dataReceived
+	    self.consumeData()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/websocket/protocol.py", line 1314, in consumeData
+	    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/websocket/protocol.py", line 1466, in processData
+	    return self.processDataHybi()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/websocket/protocol.py", line 1777, in processDataHybi
+	    fr = self.onFrameEnd()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/websocket/protocol.py", line 1904, in onFrameEnd
+	    self._onMessageEnd()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/twisted/websocket.py", line 129, in _onMessageEnd
+	    self.onMessageEnd()
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/websocket/protocol.py", line 731, in onMessageEnd
+	    self._onMessage(payload, self.message_is_binary)
+	  File "/home/ubuntu/.local/lib/python2.7/site-packages/autobahn/twisted/websocket.py", line 132, in _onMessage
+	    self.onMessage(payload, isBinary)
+	  File "./websocket-server.py", line 178, in onMessage
+	    self.processFeedback(msg['value'], msg['actualID'])
+	exceptions.AttributeError: 'OpenFaceServerProtocol' object has no attribute 'processFeedback'
+	
+2018-04-28 07:17:05+0000 [-] WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+2018-04-28 07:17:05+0000 [-] Called Close connection
+2018-04-28 07:17:19+0000 [-] Received SIGTERM, shutting down.
+2018-04-28 07:17:19+0000 [twisted.protocols.tls.TLSMemoryBIOFactory] (TLS Port 9000 Closed)
+2018-04-28 07:17:19+0000 [twisted.protocols.tls.TLSMemoryBIOFactory] Stopping factory <autobahn.twisted.websocket.WebSocketServerFactory object at 0x7f34d7b285d0>
+2018-04-28 07:17:19+0000 [-] WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+2018-04-28 07:17:19+0000 [-] Called Close connection
+2018-04-28 07:17:19+0000 [-] Main loop terminated.

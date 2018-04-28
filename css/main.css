@@ -147,3 +147,20 @@ ul.tabs li.current{
 		font-size: 15px;
     font-family: cursive;
 	}
+	
+	ul.tabs li{
+	background: white;
+    color: #337ab7;
+    display: inline-block;
+    font-size: 22px;
+    font-family: cursive;
+    padding: 10px 15px;
+    cursor: pointer;
+	}
+	
+	ul.tabs li.current {
+    background-color: #337ab7;
+    color: white;
+    }
+	
+	
