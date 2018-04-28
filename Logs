@@ -1,0 +1,343 @@
+2018-04-28 19:04:17+0530 [-] Log opened.
+2018-04-28 19:04:17+0530 [-] WebSocketServerFactory (TLS) starting on 9000
+2018-04-28 19:04:17+0530 [-] Starting factory <autobahn.twisted.websocket.WebSocketServerFactory object at 0x7ff8f3902a90>
+2018-04-28 19:06:41+0530 [-] WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+2018-04-28 19:06:41+0530 [-] Called Close connection
+2018-04-28 19:06:41+0530 [-] WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+2018-04-28 19:06:41+0530 [-] Called Close connection
+2018-04-28 19:06:41+0530 [-] Client connecting: tcp4:127.0.0.1:39400
+2018-04-28 19:06:41+0530 [-] WebSocket connection open.
+2018-04-28 19:06:41+0530 [-] Client connecting: tcp4:127.0.0.1:39402
+2018-04-28 19:06:41+0530 [-] WebSocket connection open.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 1
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 2
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 3
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 4
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 5
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 6
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 7
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 8
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 9
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 10
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 11
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 12
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 13
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 14
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 15
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 16
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 17
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 18
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 19
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 20
+2018-04-28 19:06:41+0530 [-] Received NULL message of length 15.
+2018-04-28 19:06:41+0530 [-] Received paylod number : 21
+2018-04-28 19:06:41+0530 [-] Received ALL_STATE message of length 61.
+2018-04-28 19:06:41+0530 [-] Warning: Unknown message type: ALL_STATE
+2018-04-28 19:06:41+0530 [-] Received paylod number : 22
+2018-04-28 19:06:41+0530 [-] Received FRAME message of length 1401.
+2018-04-28 19:06:41+0530 [-] received frame
+2018-04-28 19:06:42+0530 [-] 0
+2018-04-28 19:06:42+0530 [-] No human face detected
+2018-04-28 19:06:42+0530 [-] Received paylod number : 23
+2018-04-28 19:06:42+0530 [-] Received FRAME message of length 8517.
+2018-04-28 19:06:42+0530 [-] received frame
+2018-04-28 19:06:42+0530 [-] 1
+2018-04-28 19:06:42+0530 [-] came here
+2018-04-28 19:06:42+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:42+0530 [-] Received paylod number : 24
+2018-04-28 19:06:42+0530 [-] Received FRAME message of length 8489.
+2018-04-28 19:06:42+0530 [-] received frame
+2018-04-28 19:06:42+0530 [-] 1
+2018-04-28 19:06:42+0530 [-] came here
+2018-04-28 19:06:42+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:42+0530 [-] Received paylod number : 25
+2018-04-28 19:06:42+0530 [-] Received FRAME message of length 8473.
+2018-04-28 19:06:42+0530 [-] received frame
+2018-04-28 19:06:42+0530 [-] 1
+2018-04-28 19:06:42+0530 [-] came here
+2018-04-28 19:06:42+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:42+0530 [-] Received paylod number : 26
+2018-04-28 19:06:42+0530 [-] Received FRAME message of length 8517.
+2018-04-28 19:06:42+0530 [-] received frame
+2018-04-28 19:06:43+0530 [-] 1
+2018-04-28 19:06:43+0530 [-] came here
+2018-04-28 19:06:43+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:43+0530 [-] Received paylod number : 27
+2018-04-28 19:06:43+0530 [-] Received FRAME message of length 8505.
+2018-04-28 19:06:43+0530 [-] received frame
+2018-04-28 19:06:43+0530 [-] 1
+2018-04-28 19:06:43+0530 [-] came here
+2018-04-28 19:06:43+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:43+0530 [-] Received paylod number : 28
+2018-04-28 19:06:43+0530 [-] Received FRAME message of length 8505.
+2018-04-28 19:06:43+0530 [-] received frame
+2018-04-28 19:06:43+0530 [-] 1
+2018-04-28 19:06:43+0530 [-] came here
+2018-04-28 19:06:43+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:43+0530 [-] Received paylod number : 29
+2018-04-28 19:06:43+0530 [-] Received FRAME message of length 8501.
+2018-04-28 19:06:43+0530 [-] received frame
+2018-04-28 19:06:43+0530 [-] 1
+2018-04-28 19:06:44+0530 [-] came here
+2018-04-28 19:06:44+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:44+0530 [-] Received paylod number : 30
+2018-04-28 19:06:44+0530 [-] Received FRAME message of length 8441.
+2018-04-28 19:06:44+0530 [-] received frame
+2018-04-28 19:06:44+0530 [-] 1
+2018-04-28 19:06:44+0530 [-] came here
+2018-04-28 19:06:44+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:44+0530 [-] Received paylod number : 31
+2018-04-28 19:06:44+0530 [-] Received FRAME message of length 8473.
+2018-04-28 19:06:44+0530 [-] received frame
+2018-04-28 19:06:44+0530 [-] 1
+2018-04-28 19:06:44+0530 [-] came here
+2018-04-28 19:06:44+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:44+0530 [-] Received paylod number : 32
+2018-04-28 19:06:44+0530 [-] Received FRAME message of length 8481.
+2018-04-28 19:06:44+0530 [-] received frame
+2018-04-28 19:06:44+0530 [-] 1
+2018-04-28 19:06:44+0530 [-] came here
+2018-04-28 19:06:44+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:44+0530 [-] Received paylod number : 33
+2018-04-28 19:06:44+0530 [-] Received FRAME message of length 2905.
+2018-04-28 19:06:44+0530 [-] received frame
+2018-04-28 19:06:44+0530 [-] 0
+2018-04-28 19:06:44+0530 [-] No human face detected
+2018-04-28 19:06:44+0530 [-] Received paylod number : 34
+2018-04-28 19:06:44+0530 [-] Received FRAME message of length 1709.
+2018-04-28 19:06:44+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 35
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1545.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 36
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1549.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 37
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1537.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 38
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1537.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 39
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1565.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 40
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1557.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:45+0530 [-] 0
+2018-04-28 19:06:45+0530 [-] No human face detected
+2018-04-28 19:06:45+0530 [-] Received paylod number : 41
+2018-04-28 19:06:45+0530 [-] Received FRAME message of length 1561.
+2018-04-28 19:06:45+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 42
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1557.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 43
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1549.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 44
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1557.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 45
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1545.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 46
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1549.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 47
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1545.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:46+0530 [-] Received paylod number : 48
+2018-04-28 19:06:46+0530 [-] Received FRAME message of length 1545.
+2018-04-28 19:06:46+0530 [-] received frame
+2018-04-28 19:06:46+0530 [-] 0
+2018-04-28 19:06:46+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 49
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1553.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 50
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1565.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 51
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1561.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 52
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1557.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 53
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1557.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 54
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1565.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 55
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1549.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:47+0530 [-] Received paylod number : 56
+2018-04-28 19:06:47+0530 [-] Received FRAME message of length 1549.
+2018-04-28 19:06:47+0530 [-] received frame
+2018-04-28 19:06:47+0530 [-] 0
+2018-04-28 19:06:47+0530 [-] No human face detected
+2018-04-28 19:06:48+0530 [-] Received paylod number : 57
+2018-04-28 19:06:48+0530 [-] Received FRAME message of length 8557.
+2018-04-28 19:06:48+0530 [-] received frame
+2018-04-28 19:06:48+0530 [-] 0
+2018-04-28 19:06:48+0530 [-] No human face detected
+2018-04-28 19:06:48+0530 [-] Received paylod number : 58
+2018-04-28 19:06:48+0530 [-] Received FRAME message of length 8365.
+2018-04-28 19:06:48+0530 [-] received frame
+2018-04-28 19:06:48+0530 [-] 0
+2018-04-28 19:06:48+0530 [-] No human face detected
+2018-04-28 19:06:48+0530 [-] Received paylod number : 59
+2018-04-28 19:06:48+0530 [-] Received FRAME message of length 8329.
+2018-04-28 19:06:48+0530 [-] received frame
+2018-04-28 19:06:48+0530 [-] 1
+2018-04-28 19:06:48+0530 [-] came here
+2018-04-28 19:06:48+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:48+0530 [-] Received paylod number : 60
+2018-04-28 19:06:48+0530 [-] Received FRAME message of length 8409.
+2018-04-28 19:06:48+0530 [-] received frame
+2018-04-28 19:06:48+0530 [-] 1
+2018-04-28 19:06:48+0530 [-] came here
+2018-04-28 19:06:48+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:48+0530 [-] Received paylod number : 61
+2018-04-28 19:06:48+0530 [-] Received FRAME message of length 8137.
+2018-04-28 19:06:48+0530 [-] received frame
+2018-04-28 19:06:48+0530 [-] 1
+2018-04-28 19:06:48+0530 [-] came here
+2018-04-28 19:06:48+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:48+0530 [-] Received paylod number : 62
+2018-04-28 19:06:48+0530 [-] Received FRAME message of length 8125.
+2018-04-28 19:06:48+0530 [-] received frame
+2018-04-28 19:06:48+0530 [-] 1
+2018-04-28 19:06:49+0530 [-] came here
+2018-04-28 19:06:49+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:49+0530 [-] Received paylod number : 63
+2018-04-28 19:06:49+0530 [-] Received FRAME message of length 8297.
+2018-04-28 19:06:49+0530 [-] received frame
+2018-04-28 19:06:49+0530 [-] 1
+2018-04-28 19:06:49+0530 [-] came here
+2018-04-28 19:06:49+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:49+0530 [-] Received paylod number : 64
+2018-04-28 19:06:49+0530 [-] Received FRAME message of length 8329.
+2018-04-28 19:06:49+0530 [-] received frame
+2018-04-28 19:06:49+0530 [-] 1
+2018-04-28 19:06:49+0530 [-] came here
+2018-04-28 19:06:49+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:49+0530 [-] Received paylod number : 65
+2018-04-28 19:06:49+0530 [-] Received FRAME message of length 8385.
+2018-04-28 19:06:49+0530 [-] received frame
+2018-04-28 19:06:49+0530 [-] 1
+2018-04-28 19:06:49+0530 [-] came here
+2018-04-28 19:06:49+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:49+0530 [-] Received paylod number : 66
+2018-04-28 19:06:49+0530 [-] Received FRAME message of length 8421.
+2018-04-28 19:06:49+0530 [-] received frame
+2018-04-28 19:06:49+0530 [-] 1
+2018-04-28 19:06:49+0530 [-] came here
+2018-04-28 19:06:49+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:49+0530 [-] Received paylod number : 67
+2018-04-28 19:06:49+0530 [-] Received FRAME message of length 8445.
+2018-04-28 19:06:49+0530 [-] received frame
+2018-04-28 19:06:49+0530 [-] 1
+2018-04-28 19:06:49+0530 [-] came here
+2018-04-28 19:06:49+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:49+0530 [-] Received paylod number : 68
+2018-04-28 19:06:49+0530 [-] Received FRAME message of length 8405.
+2018-04-28 19:06:49+0530 [-] received frame
+2018-04-28 19:06:50+0530 [-] 1
+2018-04-28 19:06:50+0530 [-] came here
+2018-04-28 19:06:50+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:50+0530 [-] Received paylod number : 69
+2018-04-28 19:06:50+0530 [-] Received FRAME message of length 8413.
+2018-04-28 19:06:50+0530 [-] received frame
+2018-04-28 19:06:50+0530 [-] 1
+2018-04-28 19:06:50+0530 [-] came here
+2018-04-28 19:06:50+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:50+0530 [-] Received paylod number : 70
+2018-04-28 19:06:50+0530 [-] Received FRAME message of length 8473.
+2018-04-28 19:06:50+0530 [-] received frame
+2018-04-28 19:06:50+0530 [-] 1
+2018-04-28 19:06:50+0530 [-] came here
+2018-04-28 19:06:50+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:50+0530 [-] Received paylod number : 71
+2018-04-28 19:06:50+0530 [-] Received FRAME message of length 8409.
+2018-04-28 19:06:50+0530 [-] received frame
+2018-04-28 19:06:50+0530 [-] 1
+2018-04-28 19:06:50+0530 [-] came here
+2018-04-28 19:06:50+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:50+0530 [-] Received paylod number : 72
+2018-04-28 19:06:50+0530 [-] Received FRAME message of length 8433.
+2018-04-28 19:06:50+0530 [-] received frame
+2018-04-28 19:06:50+0530 [-] 1
+2018-04-28 19:06:50+0530 [-] came here
+2018-04-28 19:06:50+0530 [-] ('Unique Id: ', 0)
+2018-04-28 19:06:50+0530 [-] WebSocket connection closed: None
+2018-04-28 19:06:50+0530 [-] Called Close connection
+2018-04-28 19:06:50+0530 [-] ('Inside the if', './tcp4:127.0.0.1:39402')
+2018-04-28 19:06:50+0530 [-] Directory Moved Successful
+2018-04-28 19:06:50+0530 [-] WebSocket connection closed: None
+2018-04-28 19:06:50+0530 [-] Called Close connection
+2018-04-28 19:06:54+0530 [-] Received SIGTERM, shutting down.
+2018-04-28 19:06:54+0530 [twisted.protocols.tls.TLSMemoryBIOFactory] (TLS Port 9000 Closed)
+2018-04-28 19:06:54+0530 [twisted.protocols.tls.TLSMemoryBIOFactory] Stopping factory <autobahn.twisted.websocket.WebSocketServerFactory object at 0x7ff8f3902a90>
+2018-04-28 19:06:54+0530 [-] Main loop terminated.
