@@ -20,6 +20,16 @@ import shutil
 import time
 import pickle
 import datetime
+import dlib
+import glob
+from skimage import io
+from skimage import data, io
+#import openface
+import itertools
+import numpy as np
+from matplotlib import pyplot as plt
+import cv2
+
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -35,7 +45,6 @@ from twisted.python import log
 
 import pandas as pd
 import argparse
-import cv2
 import imagehash
 import json
 from PIL import Image
@@ -64,6 +73,10 @@ openfaceModelDir = os.path.join(modelDir, 'openface')
 # For TLS connections
 tls_crt = os.path.join(fileDir, 'tls', 'server.crt')
 tls_key = os.path.join(fileDir, 'tls', 'server.key')
+detector = dlib.get_frontal_face_detector()
+sp = dlib.shape_predictor("./shape_predictor_5_face_landmarks.dat")
+facerec = dlib.face_recognition_model_v1("./dlib_face_recognition_resnet_model_v1.dat")
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dlibFacePredictor', type=str, help="Path to dlib's face predictor.",
@@ -117,10 +130,11 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.org = ""
         self.details = None
         self.prediction = -1
-        
+
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
-
+    def euc_dist(self, a, b):
+        return np.linalg.norm(a - b)
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
         self.clientIP = str(request.peer)
@@ -147,7 +161,6 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print("Calling training all images")
             self.TrainAllImages()
 
-
         elif msg['type'] == "INFO":
             print("Name of the person is : ")
             print(msg['name'])
@@ -164,20 +177,19 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             print("Trying to detect face")
             self.testing = True
             self.processFrame_testing(msg['dataURL'])
-            self.sendMessage('{"type": "PROCESSED" }')
-            #Load SVM
-            #self.svm = loaded SVM
+            self.sendMessage('{"type": "PROCESSED_TESTING }')
+            # Load SVM
+            # self.svm = loaded SVM
 
         elif msg['type'] == "STOPPED_ACK":
             print("Storing Faces-------------------------------------")
             self.storefaces()
             print(self.uniqueID)
-            self.sendMessage('{"type": "STORED_PAGE2", "id": ' + self.uniqueID + '}')
+            self.sendMessage(
+                '{"type": "STORED_PAGE2", "id": ' + self.uniqueID + '}')
         elif msg['type'] == "FEEDBACK":
             print("Taking feedback")
             self.processFeedback(msg['value'], msg['actualID'])
-
-
         elif msg['type'] == "NULL":
             tok = 1
             self.sendMessage('{"type": "NULL"}')
@@ -210,41 +222,43 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
 
         elif msg['type'] == 'REQ_TSNE':
             self.sendTSNE(msg['people'])
-        else:           
+        else:
             print("Warning: Unknown message type: {}".format(msg['type']))
 
     def storefaces(self):
-        
-        #Generating Unique Id to user
+
+        # Generating Unique Id to user
         ts = time.time()
-        self.uniqueID = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
-        print("In function storeface:",self.uniqueID)
-        
-        #Storing User Details in CSV file
-        d = {'ID': [self.uniqueID], 'Name':[self.UName], 'Mail':[self.MailID], 'Mobile':[self.mobileNo],'Organization':[self.org] }
-        data = pd.DataFrame(data = d)
+        self.uniqueID = datetime.datetime.fromtimestamp(
+            ts).strftime('%Y%m%d%H%M%S')
+        print("In function storeface:", self.uniqueID)
+
+        # Storing User Details in CSV file
+        d = {'ID': [self.uniqueID], 'Name': [self.UName], 'Mail': [
+            self.MailID], 'Mobile': [self.mobileNo], 'Organization': [self.org]}
+        data = pd.DataFrame(data=d)
         with open('User_Details.csv', 'a') as f:
-            data.to_csv(f, header = False)
+            data.to_csv(f, header=False)
 
         userFolder = "./training_images/"+self.uniqueID
         if not os.path.exists(userFolder):
             os.makedirs(userFolder)
-            
+
         if os.path.exists(self.dirname):
             files = os.listdir(self.dirname)
             for f in files:
-                shutil.move(self.dirname+"/"+f, userFolder) 
+                shutil.move(self.dirname+"/"+f, userFolder)
             #shutil.move(self.dirname, userFolder)
             os.rmdir(self.dirname)
             print("Creation, moving and deletion done")
-        
+
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
         print("Called Close connection")
         if os.path.exists(self.dirname):
             print("Inside the if", self.dirname)
-            shutil.move(self.dirname,"./uselessFaces")
-            #shutil.remove(self.dirname)
+            shutil.move(self.dirname, "./uselessFaces")
+            # shutil.remove(self.dirname)
             print("Directory Moved Successful")
 
     def loadState(self, jsImages, training, jsPeople):
@@ -325,6 +339,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         print("+ Training SVM on {} labeled images.".format(len(self.images)))
         d = self.getData()
         if d is None:
+            print("No data found")
             self.svm = None
             return
         else:
@@ -344,7 +359,6 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             pickle.dump(self.svm, open(model_location, 'wb'))
             print("Saved in the SVM to model.sav file")
 
-
     def TrainAllImages(self):
         # Loading Data into self.images
         os.chdir('./training_images')
@@ -353,21 +367,21 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                 print("Reading images in ", fname)
                 self.people.append(int(fname))
                 for i in os.listdir(fname):
-                    alignedFace = cv2.imread(os.path.join(fname,i))
+                    alignedFace = cv2.imread(os.path.join(fname, i))
                     try:
                         img = net.forward(alignedFace)
                     except AssertionError:
                         continue
-                    #print(len(img))
+                    # print(len(img))
                     rep = Face(np.array(img), int(fname))
-                    #print(rep)
+                    # print(rep)
                     phash = str(imagehash.phash(Image.fromarray(alignedFace)))
                     self.images[phash] = rep
         os.chdir('..')
         self.trainSVM()
 
     def processFrame(self, dataURL, identity, id):
-        
+
         head = "data:image/jpeg;base64,"
         assert(dataURL.startswith(head))
         imgdata = base64.b64decode(dataURL[len(head):])
@@ -391,18 +405,18 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         if len(bbs) > 1:
             print("More than one person in front of cam")
             msg = {
-                 "type": "WARNING",
-                 "message": "Please make ensure only one person is infront of the cam"
-             }
+                "type": "WARNING",
+                "message": "Please make ensure only one person is infront of the cam"
+            }
             self.sendMessage(json.dumps(msg))
             return
 
         if len(bbs) == 0:
             print("No human face detected")
             msg = {
-                 "type": "WARNING",
-                 "message": "No face found, please be present in front of the camera, alone!!"
-             }
+                "type": "WARNING",
+                "message": "No face found, please be present in front of the camera, alone!!"
+            }
             self.sendMessage(json.dumps(msg))
             return
         bb = align.getLargestFaceBoundingBox(rgbFrame)
@@ -422,21 +436,23 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             else:
 
                 print("came here")
-                print("Unique Id: ",id)
+                print("Unique Id: ", id)
                 if(id == 0):
                     tempPath = self.dirname
                     if not os.path.exists(tempPath):
-                        os.makedirs(tempPath)         
+                        os.makedirs(tempPath)
 
-                    cv2.imwrite(tempPath+"/"+str(self.frameNum)+".jpeg", alignedFace)
+                    cv2.imwrite(tempPath+"/"+str(self.frameNum) +
+                                ".jpeg", alignedFace)
                 else:
                     tempPath = 'training_images/'+str(id)
                     if not os.path.exists(tempPath):
-                        os.makedirs(tempPath) 
-                    cv2.imwrite(tempPath+"/"+str(id)+str(self.frameNum)+".jpeg", alignedFace)
+                        os.makedirs(tempPath)
+                    cv2.imwrite(tempPath+"/"+str(id) +
+                                str(self.frameNum)+".jpeg", alignedFace)
 
     def processFrame_testing(self, dataURL):
-        
+
         head = "data:image/jpeg;base64,"
         assert(dataURL.startswith(head))
         imgdata = base64.b64decode(dataURL[len(head):])
@@ -458,13 +474,13 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     return
 
-        ####### loading SVM (Load svm)
-        if self.svm is None:
-            print("Loading SVM model file")
-            self.svm = pickle.load(open(model_location, 'rb'))
-            print(self.svm)
+        # loading SVM (Load svm)
+        # if self.svm is None:
+        #     print("Loading SVM model file")
+        #     self.svm = pickle.load(open(model_location, 'rb'))
+        #     print(self.svm)
 
-        #Opening CSV
+        # Opening CSV
         if self.details is None:
             self.details = pd.read_csv('User_Details.csv')
 
@@ -478,22 +494,22 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         if len(bbs) > 1:
             print("More than one person in front of cam")
             msg = {
-                 "type": "WARNING",
-                 "message": "Please make ensure only one person is infront of the cam"
-             }
+                "type": "WARNING",
+                "message": "Please make ensure only one person is infront of the cam"
+            }
             self.sendMessage(json.dumps(msg))
             return
 
         if len(bbs) == 0:
             print("No human face detected")
             msg = {
-                 "type": "WARNING",
-                 "message": "No face found, please be present in front of the camera, alone!!"
-             }
+                "type": "WARNING",
+                "message": "No face found, please be present in front of the camera, alone!!"
+            }
             self.sendMessage(json.dumps(msg))
             return
-        
-        ##------------------End of Handling no face or more than one face ----------------------------------
+
+        # ------------------End of Handling no face or more than one face ----------------------------------
 
         bb = align.getLargestFaceBoundingBox(rgbFrame)
         bbs = [bb] if bb is not None else []
@@ -506,42 +522,37 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             if alignedFace is None:
                 continue
 
+
             phash = str(imagehash.phash(Image.fromarray(alignedFace)))
             if phash in self.images:
                 identity = self.images[phash].identity
             else:
-                rep = net.forward(alignedFace)
-                #print(rep)
-                #if self.training:
-                #    self.images[phash] = Face(rep, identity)
-                #    # TODO: Transferring as a string is suboptimal.
-                #    content = [str(x) for x in cv2.resize(alignedFace, (0,0),
-                #    fx=0.5, fy=0.5).flatten()]
-                #    content = [str(x) for x in alignedFace.flatten()]
-                #    msg = {
-                #        "type": "NEW_IMAGE",
-                #        "hash": phash,
-                #        "content": content,
-                #        "identity": identity,
-                #        "representation": rep.tolist()
-                #    }
-                #    self.sendMessage(json.dumps(msg))
-                #else
-                if self.testing:
-                    #if len(self.people) == 0:
-                    #    identity = -1
-                    #elif len(self.people) == 1:
-                    #    identity = 0
-                    if self.svm:
-                        print("Came here")
-                        identity = self.svm.predict(rep.tolist())[0]
-                    else:
-                        print("hhh")
-                        identity = -1
-                    #if identity not in identities:
-                    #    identities.append(identity)
-                self.prediction = identity
-            #if not self.training:
+                ids = []
+                dists = []
+                facesPath = './ImagesDB'
+                files = os.listdir(facesPath)
+                print("Total number of faces in the DB: "+str(len(files)))
+                for f in files:
+                    ids.append(str(f))
+                    img2  = io.imread(facesPath+"/"+f)
+                    dets2 = detector(img2, 1)
+                    for k,d in enumerate(dets2):
+                        shape2 = sp(img2,d)
+                   	fd1 = np.zeros(128, dtype = float)
+                	fd2 = np.zeros(128, dtype = float)
+                    shape1 = sp(rgbFrame,bb)
+                    face_descriptor1 = facerec.compute_face_descriptor(rgbFrame, shape1)
+                    face_descriptor2 = facerec.compute_face_descriptor(img2, shape2)
+                    for i in range(0,128):
+		                fd1[i] = face_descriptor1[i]
+		                fd2[i] = face_descriptor2[i]
+                    dists.append(self.euc_dist(fd1,fd2))
+                mn,idx = min( (dists[i],i) for i in xrange(len(dists)) )
+                print(mn, ids[idx])
+                identity = ids[idx].partition('.')[0]
+                print("Identity is : "+str(identity))
+
+            # if not self.training:
             if self.testing:
                 bl = (bb.left(), bb.bottom())
                 tr = (bb.right(), bb.top())
@@ -550,23 +561,17 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                 for p in openface.AlignDlib.OUTER_EYES_AND_NOSE:
                     cv2.circle(annotatedFrame, center=landmarks[p], radius=3,
                                color=(102, 204, 255), thickness=-1)
-                if identity == -1:
-                    if len(self.people) == 1:
-                        name = self.people[0]
-                    else:
-                        name = "Unknown"
-                else:
-                    #name = self.people[identity]
-                    details = self.details[self.details['ID']==identity]
-                    #print(details)
-                    name  = details['Name'].values[0]
-                    print(name)
+                print(type(self.details['ID']))
+                print(type(identity))
+                details = self.details[self.details['ID'] == int(identity)]
+                name = details['Name'].values[0]
+                print(name)
                 cv2.putText(annotatedFrame, name, (bb.left(), bb.top() - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.75,
                             color=(152, 255, 204), thickness=2)
 
         # if not self.training:
-        if identity!=-1 and self.testing:
+        if identity != -1 and self.testing:
             msg = {
                 "type": "IDENTITIES",
                 "identities": identity,
@@ -592,17 +597,22 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             }
             plt.close()
             self.sendMessage(json.dumps(msg))
-    def processFeedback(self,value, actualMail):
+
+    def processFeedback(self, value, actualMail):
         print("SYYYYYYYYYYYYYYYYYYYYYY")
-        predictedMail = self.details[self.details['ID'] == self.prediction]['Mail'].values[0]
+        predictedMail = self.details[self.details['ID']
+                                     == self.prediction]['Mail'].values[0]
         if value == True:
-            d = {'Result': [value], 'ActualMail':[actualMail], 'PredictedMail':[actualMail]}
+            d = {'Result': [value], 'ActualMail': [
+                actualMail], 'PredictedMail': [actualMail]}
         else:
-            d = {'Result': [value], 'ActualMail':[actualMail], 'PredictedMail':[predictedMail]}
-        data = pd.DataFrame(data = d)
+            d = {'Result': [value], 'ActualMail': [
+                actualMail], 'PredictedMail': [predictedMail]}
+        data = pd.DataFrame(data=d)
         with open('results.csv', 'a') as f:
-            data.to_csv(f, header = False)
+            data.to_csv(f, header=False)
         print("feedback taken")
+
 
 def main(reactor):
     log.startLogging(sys.stdout)
@@ -611,6 +621,7 @@ def main(reactor):
     ctx_factory = DefaultOpenSSLContextFactory(tls_key, tls_crt)
     reactor.listenSSL(args.port, factory, ctx_factory)
     return defer.Deferred()
+
 
 if __name__ == '__main__':
     task.react(main)

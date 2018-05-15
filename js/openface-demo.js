@@ -11,83 +11,83 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/  
+*/
 navigator.getUserMedia = navigator.getUserMedia ||
-navigator.webkitGetUserMedia ||
-(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ?
-function(c, os, oe) {
-    navigator.mediaDevices.getUserMedia(c).then(os,oe);
-} : null ||
-navigator.msGetUserMedia;
+    navigator.webkitGetUserMedia ||
+    (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ?
+    function (c, os, oe) {
+        navigator.mediaDevices.getUserMedia(c).then(os, oe);
+    } : null ||
+    navigator.msGetUserMedia;
 
 window.URL = window.URL ||
-window.webkitURL ||
-window.msURL ||
-window.mozURL;
+    window.webkitURL ||
+    window.msURL ||
+    window.mozURL;
 
 // http://stackoverflow.com/questions/6524288
-$.fn.pressEnter = function(fn) {
+$.fn.pressEnter = function (fn) {
 
-    return this.each(function() {
+    return this.each(function () {
         $(this).bind('enterPress', fn);
-        $(this).keyup(function(e){
-            if(e.keyCode == 13)
-            {
-              $(this).trigger("enterPress");
-          }
-      })
+        $(this).keyup(function (e) {
+            if (e.keyCode == 13) {
+                $(this).trigger("enterPress");
+            }
+        })
     });
 };
 
 
 function registerHbarsHelpers() {
     // http://stackoverflow.com/questions/8853396
-    Handlebars.registerHelper('ifEq', function(v1, v2, options) {
-        if(v1 === v2) {
+    Handlebars.registerHelper('ifEq', function (v1, v2, options) {
+        if (v1 === v2) {
             return options.fn(this);
         }
         return options.inverse(this);
     });
 }
 function sendFrameLoop() {
+
     if (socket == null || socket.readyState != socket.OPEN ||
         !vidReady || numNulls != defaultNumNulls) {
         return;
+    }
+
+    if (tok > 0) {
+        var canvas = document.createElement('canvas');
+        canvas.width = vid.width;
+
+        canvas.height = vid.height;
+        var cc = canvas.getContext('2d');
+        cc.drawImage(vid, 0, 0, vid.width, vid.height);
+        var apx = cc.getImageData(0, 0, vid.width, vid.height);
+        var dataURL = canvas.toDataURL('image/jpeg', 0.6);
+        if (test == 1) {
+            var msg = {
+                'type': 'TESTING',
+                'dataURL': dataURL,
+                'identity': defaultPerson,
+                "ID": uniqueId
+            };
+        }
+        else {
+            var msg = {
+                'type': 'FRAME',
+                'dataURL': dataURL,
+                'identity': defaultPerson,
+                "ID": uniqueId
+            };
+        }
+
+        socket.send(JSON.stringify(msg));
+        tok--;
+    }
+    setTimeout(function () { requestAnimFrame(sendFrameLoop) }, 250);
 }
 
-if (tok > 0) {
-    var canvas = document.createElement('canvas');
-    canvas.width = vid.width;
-    
-    canvas.height = vid.height;
-    var cc = canvas.getContext('2d');
-    cc.drawImage(vid, 0, 0, vid.width, vid.height);
-    var apx = cc.getImageData(0, 0, vid.width, vid.height);
-    var dataURL = canvas.toDataURL('image/jpeg', 0.6);
-    if(test == 1){
-        var msg = {
-            'type': 'TESTING',
-            'dataURL': dataURL,
-            'identity': defaultPerson,
-            "ID": uniqueId
-        };
-    }
-    else{
-        var msg = {
-            'type': 'FRAME',
-            'dataURL': dataURL,
-            'identity': defaultPerson,
-            "ID": uniqueId
-        };
-    }
-    
-    socket.send(JSON.stringify(msg));
-    tok--;
-}
-setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 250);
-}
-
-function startTrainingAll(){
+function startTrainingAll() {
     console.log("Calling train all images");
     var msg = {
         'type': 'TRAINALLIMAGES',
@@ -95,61 +95,60 @@ function startTrainingAll(){
     socket.send(JSON.stringify(msg));
 }
 
-function submit_true_feedback(){
-	$('#mainContent').css('display','none');
+function submit_true_feedback() {
+    $('#mainContent').css('display', 'none');
     var msg = {
         'type': 'FEEDBACK',
-        'value' : true,
-        'actualID' : predictMail
+        'value': true,
+        'actualID': predictMail
     };
     socket.send(JSON.stringify(msg));
-	$('#AttendenceMsg').css('display','block');
+    $('#AttendenceMsg').css('display', 'block');
     window.setTimeout(window.location.reload(), 8000);
 
 }
 
-function submit_false_feedback(){
-	$('#emailModal').modal('hide');
+function submit_false_feedback() {
+    $('#emailModal').modal('hide');
     var actualMail = document.getElementById("actualMailID").value;
     var msg = {
         'type': 'FEEDBACK',
-        'value' : false,
-        'actualID' : actualMail
+        'value': false,
+        'actualID': actualMail
     };
     socket.send(JSON.stringify(msg));
-	$('#AttendenceMsg').css('display','block');
-	 window.setTimeout(window.location.reload(), 8000);
+    $('#AttendenceMsg').css('display', 'block');
+    window.setTimeout(window.location.reload(), 8000);
 }
 
 
-        function submit_by_data(){
-            var name = document.getElementById("name").value;
-            var email = document.getElementById("email").value;
-            var mobile = document.getElementById("number").value;
-            var company = document.getElementById("company").value;
-            if(name== "" || email == "" || mobile == "" || company == ""){
-             toastr.error('Please enter the details');
-             return false;
-         }else{
-          
-           var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-           var mobilereg = /^[0-9]{2}[0-9]{8}$/;
-           if (reg.test(email) == false) 
-           {
+function submit_by_data() {
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var mobile = document.getElementById("number").value;
+    var company = document.getElementById("company").value;
+    if (name == "" || email == "" || mobile == "" || company == "") {
+        toastr.error('Please enter the details');
+        return false;
+    } else {
+
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        var mobilereg = /^[0-9]{2}[0-9]{8}$/;
+        if (reg.test(email) == false) {
             toastr.error('Invalid Email Address');
             return false;
-        }else if(mobilereg.test(mobile) == false){
-			toastr.error('Invalid Mobile Number');
+        } else if (mobilereg.test(mobile) == false) {
+            toastr.error('Invalid Mobile Number');
             return false;
-		}else{
-			$('#pageMsgModal').modal('show');  
-	  }
-	
+        } else {
+            $('#pageMsgModal').modal('show');
+        }
+
     }
-    
+
 }
 function getPeopleInfoHtml() {
-    var info = {'-1': 0};
+    var info = { '-1': 0 };
     var len = people.length;
     for (var i = 0; i < len; i++) {
         info[i] = 0;
@@ -161,19 +160,19 @@ function getPeopleInfoHtml() {
         info[id] += 1;
     }
 
-    var h = "<li><b>Unknown:</b> "+info['-1']+"</li>";
+    var h = "<li><b>Unknown:</b> " + info['-1'] + "</li>";
     var len = people.length;
     for (var i = 0; i < len; i++) {
-        h += "<li><b>"+people[i]+":</b> "+info[i]+"</li>";
+        h += "<li><b>" + people[i] + ":</b> " + info[i] + "</li>";
     }
     return h;
 }
 
 function redrawPeople() {
-    var context = {people: people, images: images};
+    var context = { people: people, images: images };
     $("#peopleTable").html(peopleTableTmpl(context));
 
-    var context = {people: people};
+    var context = { people: people };
     $("#defaultPersonDropdown").html(defaultPersonTmpl(context));
 
     $("#peopleInfo").html(getPeopleInfoHtml());
@@ -189,11 +188,11 @@ function getDataURLFromRGB(rgb) {
     var dLen = data.length;
     var i = 0, t = 0;
 
-    for (; i < dLen; i +=4) {
-        data[i] = rgb[t+2];
-        data[i+1] = rgb[t+1];
-        data[i+2] = rgb[t];
-        data[i+3] = 255;
+    for (; i < dLen; i += 4) {
+        data[i] = rgb[t + 2];
+        data[i + 1] = rgb[t + 1];
+        data[i + 2] = rgb[t];
+        data[i + 3] = 255;
         t += 3;
     }
     ctx.putImageData(imageData, 0, 0);
@@ -206,10 +205,10 @@ function updateRTT() {
     for (var i = 5; i < defaultNumNulls; i++) {
         diffs.push(receivedTimes[i] - sentTimes[i]);
     }
-    $("#rtt-"+socketName).html(
+    $("#rtt-" + socketName).html(
         jStat.mean(diffs).toFixed(2) + " ms (σ = " +
         jStat.stdev(diffs).toFixed(2) + ")"
-        );
+    );
 }
 
 function sendState() {
@@ -227,18 +226,18 @@ function createSocket(address, name) {
     socket = new WebSocket(address);
     socketName = name;
     socket.binaryType = "arraybuffer";
-    socket.onopen = function() {
+    socket.onopen = function () {
         $("#serverStatus").html("Connected to " + name);
         sentTimes = [];
         receivedTimes = [];
         tok = defaultTok;
         numNulls = 0
-        numwarning =0;
-        socket.send(JSON.stringify({'type': 'NULL'}));
+        numwarning = 0;
+        socket.send(JSON.stringify({ 'type': 'NULL' }));
         sentTimes.push(new Date());
     }
-    socket.onmessage = function(e) {		
-		$('#submitbtn').attr('disabled',false);
+    socket.onmessage = function (e) {
+        $('#submitbtn').attr('disabled', false);
         console.log(e);
         j = JSON.parse(e.data)
         if (j.type == "NULL") {
@@ -249,42 +248,44 @@ function createSocket(address, name) {
                 sendState();
                 sendFrameLoop();
             } else {
-                socket.send(JSON.stringify({'type': 'NULL'}));
+                socket.send(JSON.stringify({ 'type': 'NULL' }));
                 sentTimes.push(new Date());
             }
-        
-    } else if (j.type == "PROCESSED") {
-        tok++;
-    }  else if(j.type == "STORED_PAGE2"){
-        uniqueId = j.id;
-        console.log(uniqueId);
-        console.log("Calling page3");
-        sessionStorage.setItem("uniqueId", uniqueId);
-        tok=1;
-        sendFrameLoop();
-        loaded();			
-           // window.open("page3.html");
-        }  else if(j.type == "WARNING") {
-			$('#submitbtn').attr('disabled',true);
+
+        } else if (j.type == "PROCESSED") {
             tok++;
-			numwarning++;
-			if(numwarning == 10){
-				numwarning=0;
-			  toastr.warning("Unable detect a single face");
-			}
-			if(numwarning == 10 && page3 == true && timeout<45){
-			   timeout = timeout + 5000;
-			  // timer.pause();
-			}
+        } else if (j.type == "PROCESSED_TESTING") {
+            tok = 0;
+        } else if (j.type == "STORED_PAGE2") {
+            uniqueId = j.id;
+            console.log(uniqueId);
+            console.log("Calling page3");
+            sessionStorage.setItem("uniqueId", uniqueId);
+            tok = 1;
+            sendFrameLoop();
+            loaded();
+            // window.open("page3.html");
+        } else if (j.type == "WARNING") {
+            $('#submitbtn').attr('disabled', true);
+            tok++;
+            numwarning++;
+            if (numwarning == 10) {
+                numwarning = 0;
+                toastr.warning("Unable detect a single face");
+            }
+            if (numwarning == 10 && page3 == true && timeout < 45) {
+                timeout = timeout + 5000;
+                // timer.pause();
+            }
             console.log(j.message)
-        }  else if(j.type == "END_FACE_COLLECTION"){
+        } else if (j.type == "END_FACE_COLLECTION") {
             tok = -100;
             var UsrName = j.name;
             var mailID = j.mail;
-            socket.send(JSON.stringify({'type': 'STOPPED_ACK',"name":UsrName,"mail":mailID}))
-        } 
-//		else if(j.type == "PAGE3"){
-           // sendFrameLoop();
+            socket.send(JSON.stringify({ 'type': 'STOPPED_ACK', "name": UsrName, "mail": mailID }))
+        }
+        //		else if(j.type == "PAGE3"){
+        // sendFrameLoop();
         //}
         else if (j.type == "NEW_IMAGE") {
             images.push({
@@ -295,14 +296,14 @@ function createSocket(address, name) {
             });
             redrawPeople();
         } else if (j.type == "IDENTITIES") {
-            console.log("Name is "+j.name);
-            console.log("Mail is "+j.mail);
+            console.log("Name is " + j.name);
+            console.log("Mail is " + j.mail);
             predictMail = j.mail;
-            console.log("Comapny is "+j.company);
-			$('#name').val(j.name);
-			$('#email').val(j.mail);
-			$('#company').val(j.company);
-			$('#formContentView').css('display','block');
+            console.log("Comapny is " + j.company);
+            $('#name').val(j.name);
+            $('#email').val(j.mail);
+            $('#company').val(j.company);
+            $('#formContentView').css('display', 'block');
             /*var h = "Last updated: " + (new Date()).toTimeString();
             h += "<ul>";
             var len = j.identities.length
@@ -325,7 +326,7 @@ function createSocket(address, name) {
             console.log("Came to Annotated")
             $("#detectedFaces").html(
                 "<img src='" + j['content'] + "' width='430px'></img>"
-                )
+            )
 
         } else if (j.type == "TSNE_DATA") {
             BootstrapDialog.show({
@@ -335,11 +336,11 @@ function createSocket(address, name) {
             console.log("Unrecognized message type: " + j.type);
         }
     }
-    socket.onerror = function(e) {
+    socket.onerror = function (e) {
         console.log("Error creating WebSocket connection to " + address);
         console.log(e);
     }
-    socket.onclose = function(e) {
+    socket.onclose = function (e) {
         if (e.target == socket) {
             $("#serverStatus").html("Disconnected.");
         }
@@ -352,15 +353,15 @@ function umSuccess(stream) {
         vid.mozSrcObject = stream;
     } else {
         vid.src = (window.URL && window.URL.createObjectURL(stream)) ||
-        stream;
+            stream;
     }
     vid.play();
     vidReady = true;
     sendFrameLoop();
 }
 
-function RegisterbtnOnClick(){
-    if(socket != null){
+function RegisterbtnOnClick() {
+    if (socket != null) {
         var msg = {
             'type': 'register_click',
             'val': 'clicked on register'
@@ -458,81 +459,79 @@ function changeServerCallback() {
     $(this).addClass("active").siblings().removeClass("active");
     switch ($(this).html()) {
         case "Local":
-        socket.close();
-        redrawPeople();
-        createSocket("wss:" + window.location.hostname + ":9000", "Local");
-        break;
+            socket.close();
+            redrawPeople();
+            createSocket("wss:" + window.location.hostname + ":9000", "Local");
+            break;
         case "CMU":
-        socket.close();
-        redrawPeople();
-        createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
-        break;
+            socket.close();
+            redrawPeople();
+            createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
+            break;
         case "AWS East":
-        socket.close();
-        redrawPeople();
-        createSocket("wss://54.159.128.49:9000", "AWS-East");
-        break;
+            socket.close();
+            redrawPeople();
+            createSocket("wss://54.159.128.49:9000", "AWS-East");
+            break;
         case "AWS West":
-        socket.close();
-        redrawPeople();
-        createSocket("wss://54.188.234.61:9000", "AWS-West");
-        break;
+            socket.close();
+            redrawPeople();
+            createSocket("wss://54.188.234.61:9000", "AWS-West");
+            break;
         default:
-        alert("Unrecognized server: " + $(this.html()));
+            alert("Unrecognized server: " + $(this.html()));
     }
 }
 
-function loaded()
-{
+function loaded() {
     uniqueId = sessionStorage.getItem("uniqueId");
     toastr.info("This window will be closed after 30 seconds");
     window.setTimeout(CloseMe, timeout);
 }
 
-function CloseMe() 
-{
- tok=-100;
-           // toastr.success("Saved your face successfully");
-           $('#successMsg').css('display','block');
-           $('#mainContent').css('display','none');
-           window.setTimeout(window.location.reload(), 20000);
-           // console.log("Closing");
-        }
-function closeModal(){
-       
-	   $('#pageMsgModal').modal('hide');
-      page3=true;
-	   var name = document.getElementById("name").value;
-       var email = document.getElementById("email").value;
-       var mobile = document.getElementById("number").value;
-       var company = document.getElementById("company").value;
-		   $('#userInfo').css('display','block');
-	       $('#overlay').css('display','block');
-	       $('#formContent').css('display','none');
-		   $('#countdownExample').css('display','block');
-		   var timer = new Timer();
-            timer.start({countdown: true, startValues: {seconds: (timeout/1000)}});
-              $('#countdownExample .values').html(timer.getTimeValues().toString());
-              timer.addEventListener('secondsUpdated', function (e) {
-               $('#countdownExample .values').html(timer.getTimeValues().toString());
-              });
-            timer.addEventListener('targetAchieved', function (e) {
-            $('#countdownExample .values').html('NICE TO SEE YOU !!');
-              });
-          
-           var msg = {
-            'type': 'INFO',
-            'name': name,
-            'mail' : email,
-            'mobile' : mobile,
-            'company' : company
-             };
-       console.log("Submiting info");
-       socket.send(JSON.stringify(msg));
+function CloseMe() {
+    tok = -100;
+    // toastr.success("Saved your face successfully");
+    $('#successMsg').css('display', 'block');
+    $('#mainContent').css('display', 'none');
+    window.setTimeout(window.location.reload(), 20000);
+    // console.log("Closing");
+}
+function closeModal() {
+
+    $('#pageMsgModal').modal('hide');
+    page3 = true;
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var mobile = document.getElementById("number").value;
+    var company = document.getElementById("company").value;
+    $('#userInfo').css('display', 'block');
+    $('#overlay').css('display', 'block');
+    $('#formContent').css('display', 'none');
+    $('#countdownExample').css('display', 'block');
+    var timer = new Timer();
+    timer.start({ countdown: true, startValues: { seconds: (timeout / 1000) } });
+    $('#countdownExample .values').html(timer.getTimeValues().toString());
+    timer.addEventListener('secondsUpdated', function (e) {
+        $('#countdownExample .values').html(timer.getTimeValues().toString());
+    });
+    timer.addEventListener('targetAchieved', function (e) {
+        $('#countdownExample .values').html('NICE TO SEE YOU !!');
+    });
+
+    var msg = {
+        'type': 'INFO',
+        'name': name,
+        'mail': email,
+        'mobile': mobile,
+        'company': company
+    };
+    console.log("Submiting info");
+    socket.send(JSON.stringify(msg));
 }
 
-function mailForm(){
-$('#mainContent').css('display','none');
- $('#emailModal').modal('show');
+function mailForm() {
+    $('#mainContent').css('display', 'none');
+    $('#emailModal').modal('show');
 
 }
